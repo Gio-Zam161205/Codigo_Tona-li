@@ -1,6 +1,9 @@
 body {
   font-family: 'Space Grotesk', sans-serif;
   background-color: #060913;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.08), transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.07), transparent 35%);
   color: #e2e8f0;
 }
 
@@ -10,11 +13,18 @@ body {
 
 .glass-panel {
   background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(56, 189, 248, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(56, 189, 248, 0.18);
 }
 
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0.22) 0%, rgba(6, 182, 212, 0.03) 100%);
+  border-left: 3px solid #22d3ee;
+  color: #ffffff;
+}
+
+/* Animaciones de Alerta Crítica */
 .alert-pulse {
   animation: pulseRed 1.5s infinite;
 }
@@ -28,6 +38,78 @@ body {
     box-shadow: 0 0 25px 4px rgba(239, 68, 68, 0.35);
     border-color: rgba(239, 68, 68, 1);
   }
+}
+
+@keyframes alarm-glow {
+  0%, 100% {
+    box-shadow: 0 0 35px rgba(244, 63, 94, 0.45);
+    border-color: rgba(244, 63, 94, 0.95);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(244, 63, 94, 0.15);
+    border-color: rgba(244, 63, 94, 0.4);
+  }
+}
+
+.critical-modal-box {
+  animation: alarm-glow 1.4s infinite;
+}
+
+/* Animaciones del Escáner Holográfico 3D */
+@keyframes scan-beam {
+  0% {
+    transform: translateY(10px);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(245px);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(10px);
+    opacity: 0.2;
+  }
+}
+
+.scanner-laser {
+  animation: scan-beam 4.5s ease-in-out infinite;
+}
+
+@keyframes radar-ping {
+  0% {
+    r: 6;
+    opacity: 0.9;
+  }
+  100% {
+    r: 18;
+    opacity: 0;
+  }
+}
+
+.node-ping {
+  animation: radar-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.target-reticle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin-slow 8s linear infinite;
+}
+
+.holo-grid {
+  background-image: 
+    linear-gradient(to right, rgba(34, 211, 238, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.06) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Scrollbar personalizado para la bitácora */
