@@ -1,19 +1,3 @@
-/**
- * ============================================================================
- * @fileoverview Motor principal de telemetría, gestión dinámica de tripulación,
- *               diagnóstico multi-gravedad y visualización biomédica para
- *               el sistema TONALLI VITAL.
- * @version      2.2.0
- * @description  Administra:
- *               1. Navegación SPA entre módulos clínicos.
- *               2. Recalibración física y médica según gravedad (0g, 0.16g, 0.38g, 1g).
- *               3. Alta, selección, baja y persistencia (localStorage) de tripulantes.
- *               4. Validación de umbrales clínicos y protocolo de emergencia autónomo.
- *               5. Escáner anatómico interactivo (5 Peligros NASA HRP).
- *               6. Renderizado en Canvas 2D (ECG a 60 FPS y gráficas de tendencia).
- * ============================================================================
- */
-
 /* ============================================================================
    1. DICCIONARIOS DE CONFIGURACIÓN Y MODELOS DE ENTORNO GRAVITACIONAL
    ============================================================================ */
@@ -22,6 +6,7 @@ const titulosVistas = {
   'view-telemetry': 'Telemetría Biomédica y Tendencia Temporal',
   'view-anatomy': 'Escáner Holográfico Anatómico (5 Peligros NASA)',
   'view-checkup': 'Autoevaluación Biomédica y Conductual',
+  'view-mental': 'Contención Neuro-Conductual y Salud Mental IA (BHP)',
   'view-prevention': 'Protocolo Diario de Prevención y Contramedidas'
 };
 
@@ -147,12 +132,11 @@ document.getElementById('envSelector').addEventListener('change', (e) => {
 });
 
 /* ============================================================================
-   3. GESTIÓN DINÁMICA DE TRIPULACIÓN (ALTA, SELECCIÓN, BAJA Y PERSISTENCIA)
+   3. GESTIÓN DINÁMICA DE TRIPULACIÓN
    ============================================================================ */
 
 const STORAGE_KEY = 'tonalli_vital_crew_v1';
 
-/** Tripulación inicial por defecto */
 const tripulacionBase = [
   {
     id: 1, nombre: 'Cmdt. Elena Vance', modulo: 'Módulo Orión',
@@ -174,32 +158,23 @@ const tripulacionBase = [
   }
 ];
 
-/** Carga la tripulación desde localStorage o inicia con la plantilla base */
 let tripulacion = JSON.parse(localStorage.getItem(STORAGE_KEY)) || JSON.parse(JSON.stringify(tripulacionBase));
 let astronautaActual = 0;
 let modoEmergencia = false;
 
-/** Guarda el estado actual de la tripulación en el almacenamiento del navegador */
 function guardarTripulacionStorage() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tripulacion));
 }
 
-/** Abre el modal para dar de alta un nuevo astronauta */
 function abrirModalRegistro() {
   document.getElementById('formNewCrew').reset();
   document.getElementById('registerCrewModal').style.display = 'flex';
 }
 
-/** Cierra el modal de alta de tripulantes */
 function cerrarModalRegistro() {
   document.getElementById('registerCrewModal').style.display = 'none';
 }
 
-/**
- * Procesa el formulario de alta, sintetiza un historial basal de 7 días
- * alrededor de los signos ingresados y enfoca al nuevo tripulante.
- * @param {SubmitEvent} event - Evento de envío del formulario.
- */
 function registrarNuevoTripulante(event) {
   event.preventDefault();
 
@@ -212,35 +187,18 @@ function registrarNuevoTripulante(event) {
   const glucose = parseInt(document.getElementById('regGlucose').value, 10);
   const sleep = parseFloat(document.getElementById('regSleep').value);
 
-  // Generar curva histórica coherente de los últimos 6 días + lectura actual
-  const histBpm = [
-    bpm - 2, bpm + 1, bpm - 1, bpm + 3, bpm - 2, bpm + 1, bpm
-  ];
+  const histBpm = [bpm - 2, bpm + 1, bpm - 1, bpm + 3, bpm - 2, bpm + 1, bpm];
   const histSleep = [
-    Math.max(4, sleep + 0.3),
-    Math.max(4, sleep - 0.2),
-    Math.max(4, sleep + 0.1),
-    Math.max(4, sleep - 0.4),
-    Math.max(4, sleep + 0.2),
-    Math.max(4, sleep - 0.1),
-    sleep
+    Math.max(4, sleep + 0.3), Math.max(4, sleep - 0.2), Math.max(4, sleep + 0.1),
+    Math.max(4, sleep - 0.4), Math.max(4, sleep + 0.2), Math.max(4, sleep - 0.1), sleep
   ];
 
   const nuevoAstronauta = {
     id: Date.now(),
-    nombre,
-    modulo,
-    bpm,
-    sys,
-    dia,
-    spo2,
-    glucose,
-    temp: 36.6,
-    sleep,
-    mood: 'Óptimo',
+    nombre, modulo, bpm, sys, dia, spo2, glucose,
+    temp: 36.6, sleep, mood: 'Óptimo',
     estado: bpm > 130 || spo2 < 91 ? 'ALERTA' : 'Nominal',
-    histBpm,
-    histSleep
+    histBpm, histSleep
   };
 
   tripulacion.push(nuevoAstronauta);
@@ -256,11 +214,6 @@ function registrarNuevoTripulante(event) {
   registrarBitacora(`Nuevo tripulante integrado: ${nombre} (${modulo}). Telemetría vinculada.`, 'ok');
 }
 
-/**
- * Elimina un tripulante adicional (mantiene al menos 1 activo en misión).
- * @param {number} idx - Índice del tripulante en el arreglo.
- * @param {MouseEvent} event - Evento de clic para detener propagación.
- */
 function eliminarTripulante(idx, event) {
   event.stopPropagation();
   if (tripulacion.length <= 1) return;
@@ -279,7 +232,6 @@ function eliminarTripulante(idx, event) {
   registrarBitacora(`Tripulante ${eliminado} dado de baja del panel activo.`);
 }
 
-/** Restaura los 3 tripulantes iniciales por defecto */
 function restablecerTripulacionBase() {
   tripulacion = JSON.parse(JSON.stringify(tripulacionBase));
   astronautaActual = 0;
@@ -297,6 +249,7 @@ function registrarBitacora(mensaje, tipo = 'info') {
   const hora = new Date().toLocaleTimeString('es-MX', { hour12: false });
   const estilo = tipo === 'alert' ? 'text-rose-300 border-rose-500/40 bg-rose-950/40' :
                  tipo === 'ok' ? 'text-emerald-300 border-emerald-500/30 bg-emerald-950/30' :
+                 tipo === 'mental' ? 'text-purple-300 border-purple-500/40 bg-purple-950/40' :
                  'text-slate-300 border-slate-800 bg-slate-950/60';
   const item = document.createElement('div');
   item.className = `p-2.5 rounded-xl border ${estilo}`;
@@ -312,18 +265,21 @@ function renderizarTripulacion() {
   tripulacion.forEach((astro, idx) => {
     const activo = idx === astronautaActual;
     const esCritico = astro.estado === 'CRÍTICO' || astro.estado === 'ALERTA';
+    const esMental = astro.estado === 'BHP-ALERTA';
     const btn = document.createElement('div');
     btn.className = `w-full text-left p-2.5 rounded-xl border transition cursor-pointer ${
       activo ? 'bg-cyan-500/15 border-cyan-500/50 text-white' : 'bg-slate-950/50 border-slate-800/80 text-slate-400 hover:border-slate-700'
     }`;
 
+    let badgeClass = 'bg-slate-800 text-cyan-300';
+    if (esCritico) badgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/40';
+    else if (esMental) badgeClass = 'bg-purple-500/20 text-purple-300 border border-purple-500/40';
+
     btn.innerHTML = `
       <div class="flex justify-between items-center gap-1">
         <span class="text-xs font-bold truncate">${astro.nombre}</span>
         <div class="flex items-center gap-1 shrink-0">
-          <span class="text-[10px] font-mono-tech px-1.5 py-0.5 rounded ${
-            esCritico ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-slate-800 text-cyan-300'
-          }">${astro.estado}</span>
+          <span class="text-[10px] font-mono-tech px-1.5 py-0.5 rounded ${badgeClass}">${astro.estado}</span>
           ${tripulacion.length > 1 ? `
             <button type="button" title="Retirar tripulante" onclick="eliminarTripulante(${idx}, event)" class="text-[10px] text-slate-500 hover:text-rose-400 px-1 cursor-pointer">✕</button>
           ` : ''}
@@ -361,7 +317,7 @@ function actualizarMetricas() {
   document.getElementById('cardSpo2').className = `glass-panel rounded-2xl p-3.5 transition-all ${a.spo2 < 91 ? 'border-rose-500 bg-rose-950/40' : ''}`;
   document.getElementById('cardGlucose').className = `glass-panel rounded-2xl p-3.5 transition-all ${(a.glucose > 160 || a.glucose < 65) ? 'border-rose-500 bg-rose-950/40' : ''}`;
   document.getElementById('cardTemp').className = `glass-panel rounded-2xl p-3.5 transition-all ${(a.temp > 38.2 || a.sleep < 4.5) ? 'border-amber-500 bg-amber-950/30' : ''}`;
-  document.getElementById('cardMood').className = `glass-panel rounded-2xl p-3.5 transition-all ${a.mood === 'Ansiedad' ? 'border-amber-500 bg-amber-950/30' : ''}`;
+  document.getElementById('cardMood').className = `glass-panel rounded-2xl p-3.5 transition-all ${(a.mood === 'Ansiedad' || a.mood === 'Alucinación') ? 'border-purple-500 bg-purple-950/30' : ''}`;
 
   const badge = document.getElementById('ecgBadge');
   if (modoEmergencia) {
@@ -531,7 +487,259 @@ function evaluarSaludLocal() {
 }
 
 /* ============================================================================
-   5. ESCÁNER HOLOGRÁFICO ANATÓMICO 3D (5 PELIGROS NASA HRP)
+   5. NUEVO MÓDULO: SALUD MENTAL IA, HOLOGRAMA NEURO-SOMÁTICO Y CONTENCIÓN
+   ============================================================================ */
+
+let mentalVoiceActive = true;
+let mentalBreathingTimer = null;
+
+let mentalNodesInfo = {
+  brain: '[CORTEZA / SISTEMA LÍMBICO] Regula emociones, ciclo circadiano y percepción sensorial. En aislamiento profundo puede presentar hiperactividad amigdalar (ansiedad) o fosfenos.',
+  heart: '[EJE VAGAL / CARDIORRESPIRATORIO] En crisis de pánico o claustrofobia en traje EVA, el sistema simpático dispara el pulso >110 BPM con oxigenación normal.',
+  cortisol: '[EJE HPA / CORTISOL] La privación de sueño (<5h) eleva el cortisol sostenido, debilitando la memoria operativa y el estado de ánimo.'
+};
+
+function hablarIAMental(texto) {
+  const msgEl = document.getElementById('mentalAiMessage');
+  const orbEl = document.getElementById('mentalAiOrb');
+  msgEl.textContent = `"${texto}"`;
+
+  if (!mentalVoiceActive || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const voz = new SpeechSynthesisUtterance(texto);
+  voz.lang = 'es-MX';
+  voz.rate = 0.94;
+  voz.pitch = 0.92;
+  voz.onstart = () => orbEl.classList.add('speaking');
+  voz.onend = () => orbEl.classList.remove('speaking');
+  window.speechSynthesis.speak(voz);
+}
+
+function toggleVozMental() {
+  mentalVoiceActive = !mentalVoiceActive;
+  const btn = document.getElementById('btnToggleMentalVoice');
+  btn.textContent = mentalVoiceActive ? '🔊 Voz: Activa' : '🔇 Voz: Silencio';
+  if (!mentalVoiceActive && 'speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function toggleRespiracionGuiada() {
+  const orbEl = document.getElementById('mentalAiOrb');
+  const btn = document.getElementById('btnMentalBreathe');
+
+  if (mentalBreathingTimer) {
+    clearInterval(mentalBreathingTimer);
+    mentalBreathingTimer = null;
+    orbEl.classList.remove('breathing');
+    btn.textContent = '🧘 Iniciar Respiración Táctica 4-4-4-4';
+    hablarIAMental('Secuencia de respiración finalizada. Tu ritmo vagal se está estabilizando.');
+    return;
+  }
+
+  orbEl.classList.add('breathing');
+  btn.textContent = '⏹ Detener Respiración Guiada';
+  const fases = [
+    'Inhala suavemente durante cuatro segundos...',
+    'Sostén el aire cuatro segundos...',
+    'Exhala despacio durante cuatro segundos...',
+    'Mantén calma cuatro segundos...'
+  ];
+  let i = 0;
+  hablarIAMental(fases[0]);
+  mentalBreathingTimer = setInterval(() => {
+    i = (i + 1) % fases.length;
+    hablarIAMental(fases[i]);
+  }, 4000);
+}
+
+function aplicarClaseNodoMental(id, estado) {
+  const el = document.getElementById(id);
+  el.classList.remove('m-zone-normal', 'm-zone-warning', 'm-zone-mental', 'm-zone-critical');
+  el.classList.add(`m-zone-${estado}`);
+}
+
+function inspeccionarPuntoMental(clave) {
+  document.getElementById('mentalNodeInfo').textContent = mentalNodesInfo[clave];
+}
+
+function renderizarAccionesMentales(pasos) {
+  const lista = document.getElementById('mentalActionsList');
+  lista.innerHTML = '';
+  pasos.forEach((paso) => {
+    const label = document.createElement('label');
+    label.className = 'flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-950/75 border border-purple-500/25 cursor-pointer hover:border-purple-400 transition';
+    label.innerHTML = `<input type="checkbox" class="mental-step-cb mt-0.5 accent-purple-400" /><span class="text-slate-200">${paso}</span>`;
+    lista.appendChild(label);
+  });
+  actualizarContadorPasosMentales();
+  document.querySelectorAll('.mental-step-cb').forEach(cb => cb.addEventListener('change', actualizarContadorPasosMentales));
+}
+
+function actualizarContadorPasosMentales() {
+  const total = document.querySelectorAll('.mental-step-cb').length;
+  const hechos = document.querySelectorAll('.mental-step-cb:checked').length;
+  document.getElementById('mentalStepsCounter').textContent = `${hechos}/${total} pasos`;
+}
+
+function ejecutarEscaneoMental() {
+  const laser = document.getElementById('mentalScanLaser');
+  laser.classList.remove('hidden');
+  document.getElementById('mentalNodeInfo').textContent = '[ ESCANEANDO ACTIVIDAD NEURO-CONDUCTUAL... ]';
+
+  setTimeout(() => {
+    laser.classList.add('hidden');
+    procesarDiagnosticoMental();
+  }, 1300);
+}
+
+function procesarDiagnosticoMental() {
+  const sleep = parseFloat(document.getElementById('mentalSleepInput').value);
+  const stress = parseInt(document.getElementById('mentalStressInput').value, 10);
+  const sintomas = Array.from(document.querySelectorAll('.mental-symptom-cb:checked')).map(cb => cb.value);
+
+  const a = tripulacion[astronautaActual];
+  const cfg = escenariosConfig[escenarioActual];
+  a.sleep = sleep;
+  a.histSleep[a.histSleep.length - 1] = sleep;
+
+  let stBrain = 'normal';
+  let stHeart = 'normal';
+  let stCortisol = 'normal';
+  let hallazgos = [];
+  let pasos = [];
+
+  const tieneAnsiedad = sintomas.includes('ansiedad') || stress >= 7;
+  const tieneDepresion = sintomas.includes('depresion');
+  const tieneAlucinacion = sintomas.includes('alucinacion') || sleep <= 4.5;
+
+  if (tieneAlucinacion) {
+    stBrain = 'critical';
+    hallazgos.push('distorsiones perceptuales / alucinaciones por fatiga');
+    pasos.push('🛑 PROTOCOLO REALITY-CHECK: Suspender maniobras críticas y pedir doble verificación a un compañero.');
+    pasos.push('💡 Encender iluminación blanca del módulo al 100% y programar ciclo de sueño supervisado.');
+    mentalNodesInfo.brain = `[ALERTA CRÍTICA CORTEZA] Privación de sueño (${sleep}h) o radiación causando fosfenos/alucinaciones.`;
+  } else if (tieneAnsiedad || tieneDepresion) {
+    stBrain = 'mental';
+    mentalNodesInfo.brain = `[CONTENCIÓN LÍMBICA] Activación por ${tieneAnsiedad ? 'ansiedad aguda' : 'aislamiento prolongado'}.`;
+  } else {
+    mentalNodesInfo.brain = `[CORTEZA NOMINAL] Percepción sensorial y estado cognitivo estables (${sleep}h sueño).`;
+  }
+
+  if (tieneAnsiedad) {
+    stHeart = 'warning';
+    a.bpm = Math.max(a.bpm, 112);
+    hallazgos.push('respuesta aguda de ansiedad');
+    pasos.push('🧘 Iniciar guía de respiración táctica 4-4-4-4 en el núcleo Tonalli-BHP.');
+    pasos.push('🎧 Activar audio de aislamiento acústico y reducir alertas visuales no críticas.');
+    mentalNodesInfo.heart = `[ALERTA VAGAL] Taquicardia reactiva (${a.bpm} BPM) asociada a estrés/confinamiento.`;
+  } else {
+    mentalNodesInfo.heart = '[EJE VAGAL NOMINAL] Frecuencia respiratoria y tono vagal equilibrados.';
+  }
+
+  if (tieneDepresion || sleep < 6) {
+    stCortisol = 'mental';
+    if (tieneDepresion) hallazgos.push('fatiga emocional por aislamiento');
+    pasos.push('☀️ Activar terapia de luz azul circadiana (480 nm) y reproducir paquete sensorial terrestre.');
+    mentalNodesInfo.cortisol = `[ALERTA CORTISOL] Descanso de ${sleep}h. Se recomienda ajuste circadiano.`;
+  } else {
+    mentalNodesInfo.cortisol = '[CORTISOL NOMINAL] Ritmo circadiano sincronizado.';
+  }
+
+  aplicarClaseNodoMental('m-node-brain', stBrain);
+  aplicarClaseNodoMental('m-node-heart', stHeart);
+  aplicarClaseNodoMental('m-node-cortisol', stCortisol);
+
+  const badge = document.getElementById('mentalStatusBadge');
+
+  if (hallazgos.length > 0) {
+    a.mood = tieneAlucinacion ? 'Alucinación' : 'Ansiedad';
+    a.estado = 'BHP-ALERTA';
+    badge.textContent = tieneAlucinacion ? 'REALITY-CHECK' : 'CONTENCIÓN BHP';
+    badge.className = 'text-[10px] font-mono-tech px-2.5 py-0.5 rounded-full bg-purple-500/25 text-purple-200 border border-purple-400';
+
+    hablarIAMental(`Estoy contigo, ${a.nombre}. En ${cfg.nombre} detecto ${hallazgos.join(' y ')}. Sigue los pasos de contención en pantalla y usa la respiración guiada.`);
+    registrarBitacora(`Protocolo Salud Mental (BHP) activado para ${a.nombre} en ${cfg.nombre}.`, 'mental');
+  } else {
+    a.mood = 'Óptimo';
+    a.estado = 'Nominal';
+    badge.textContent = 'ESTABLE';
+    badge.className = 'text-[10px] font-mono-tech px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+    pasos = [
+      'Mantener bitácora emocional diaria y contacto periódico con familia.',
+      'Respetar ventana de sueño de 7.5 horas bajo ciclo de luz circadiana.'
+    ];
+    hablarIAMental(`Tu equilibrio neuro-conductual es óptimo, ${a.nombre}. Continúa con tu rutina de descanso.`);
+    registrarBitacora(`Escaneo neuro-conductual nominal para ${a.nombre}.`, 'ok');
+  }
+
+  renderizarAccionesMentales(pasos);
+  guardarTripulacionStorage();
+  actualizarMetricas();
+  renderizarTripulacion();
+  dibujarTendencia();
+  document.getElementById('mentalNodeInfo').textContent = '[ ESCANEO LISTO ] Haz clic en CORTEZA, VAGAL o CORTISOL para ver detalle.';
+}
+
+function simularCrisisMental(tipo) {
+  document.querySelectorAll('.mental-symptom-cb').forEach(cb => cb.checked = false);
+  if (tipo === 'panico') {
+    document.getElementById('mentalSleepInput').value = 5.5;
+    document.getElementById('mentalStressInput').value = 9;
+    document.querySelector('.mental-symptom-cb[value="ansiedad"]').checked = true;
+  } else {
+    document.getElementById('mentalSleepInput').value = 3.0;
+    document.getElementById('mentalStressInput').value = 8;
+    document.querySelector('.mental-symptom-cb[value="alucinacion"]').checked = true;
+    document.querySelector('.mental-symptom-cb[value="depresion"]').checked = true;
+  }
+  ejecutarEscaneoMental();
+}
+
+function estabilizarEstadoMental() {
+  if (mentalBreathingTimer) {
+    clearInterval(mentalBreathingTimer);
+    mentalBreathingTimer = null;
+  }
+  document.getElementById('mentalAiOrb').classList.remove('breathing');
+  document.getElementById('btnMentalBreathe').textContent = '🧘 Iniciar Respiración Táctica 4-4-4-4';
+  document.querySelectorAll('.mental-symptom-cb').forEach(cb => cb.checked = false);
+  document.getElementById('mentalStressInput').value = 2;
+
+  aplicarClaseNodoMental('m-node-brain', 'normal');
+  aplicarClaseNodoMental('m-node-heart', 'normal');
+  aplicarClaseNodoMental('m-node-cortisol', 'normal');
+
+  const a = tripulacion[astronautaActual];
+  a.bpm = 74;
+  a.mood = 'Óptimo';
+  a.estado = 'Nominal';
+  a.histBpm[a.histBpm.length - 1] = 74;
+
+  const badge = document.getElementById('mentalStatusBadge');
+  badge.textContent = 'ESTABLE';
+  badge.className = 'text-[10px] font-mono-tech px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+
+  renderizarAccionesMentales([
+    'Mantener bitácora emocional diaria y contacto periódico con familia.',
+    'Respetar ventana de sueño de 7.5 horas bajo ciclo de luz circadiana.'
+  ]);
+  hablarIAMental(`Estabilización confirmada para ${a.nombre}. Parámetros emocionales y cognitivos restablecidos.`);
+  guardarTripulacionStorage();
+  actualizarMetricas();
+  renderizarTripulacion();
+  dibujarTendencia();
+  registrarBitacora(`Estado neuro-conductual estabilizado en ${a.nombre}.`, 'ok');
+}
+
+// Inicializar pasos por defecto de salud mental
+renderizarAccionesMentales([
+  'Mantener bitácora emocional diaria y contacto periódico con familia.',
+  'Respetar ventana de sueño de 7.5 horas bajo ciclo de luz circadiana.'
+]);
+
+/* ============================================================================
+   6. ESCÁNER HOLOGRÁFICO ANATÓMICO 3D (5 PELIGROS NASA HRP)
    ============================================================================ */
 
 const organData = {
@@ -626,13 +834,15 @@ function actualizarBienestar() {
 }
 
 /* ============================================================================
-   6. MOTOR DE SIMULACIÓN FISIOLÓGICA Y GRÁFICAS EN CANVAS 2D
+   7. MOTOR DE SIMULACIÓN FISIOLÓGICA Y GRÁFICAS EN CANVAS 2D
    ============================================================================ */
 
 setInterval(() => {
   tripulacion.forEach((p) => {
-    if (p.estado !== 'CRÍTICO' && p.estado !== 'ALERTA') {
+    if (p.estado !== 'CRÍTICO' && p.estado !== 'ALERTA' && p.estado !== 'BHP-ALERTA') {
       p.bpm = Math.max(62, Math.min(84, p.bpm + (Math.floor(Math.random() * 5) - 2)));
+    } else if (p.estado === 'BHP-ALERTA') {
+      p.bpm = Math.max(105, Math.min(122, p.bpm + (Math.floor(Math.random() * 5) - 2)));
     } else {
       p.bpm = Math.max(145, Math.min(165, p.bpm + (Math.floor(Math.random() * 7) - 3)));
     }
@@ -754,9 +964,6 @@ function dibujarECG() {
   requestAnimationFrame(dibujarECG);
 }
 
-/* ============================================================================
-   7. INICIALIZACIÓN DEL SISTEMA
-   ============================================================================ */
 window.addEventListener('resize', dibujarTendencia);
 
 renderizarTripulacion();
