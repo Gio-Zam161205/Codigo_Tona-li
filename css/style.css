@@ -57,18 +57,9 @@ body {
 
 /* Animaciones del Escáner Holográfico 3D */
 @keyframes scan-beam {
-  0% {
-    transform: translateY(10px);
-    opacity: 0.2;
-  }
-  50% {
-    transform: translateY(245px);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translateY(10px);
-    opacity: 0.2;
-  }
+  0% { transform: translateY(10px); opacity: 0.2; }
+  50% { transform: translateY(245px); opacity: 0.9; }
+  100% { transform: translateY(10px); opacity: 0.2; }
 }
 
 .scanner-laser {
@@ -76,14 +67,8 @@ body {
 }
 
 @keyframes radar-ping {
-  0% {
-    r: 6;
-    opacity: 0.9;
-  }
-  100% {
-    r: 18;
-    opacity: 0;
-  }
+  0% { r: 6; opacity: 0.9; }
+  100% { r: 18; opacity: 0; }
 }
 
 .node-ping {
@@ -91,12 +76,8 @@ body {
 }
 
 @keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .target-reticle {
@@ -112,16 +93,103 @@ body {
   background-size: 20px 20px;
 }
 
+/* ============================================================================
+   ESTILOS DEL MÓDULO DE SALUD MENTAL IA (BHP)
+   ============================================================================ */
+.mental-scan-laser {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #c084fc, #fff, #c084fc, transparent);
+  box-shadow: 0 0 15px #c084fc, 0 0 28px #a855f7;
+  z-index: 20;
+  animation: mentalLaserMove 1.3s ease-in-out infinite;
+}
+
+@keyframes mentalLaserMove {
+  0% { top: 8%; opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: 92%; opacity: 0; }
+}
+
+.mental-orb {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(168, 85, 247, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.35);
+  transition: all 0.4s ease;
+}
+
+.mental-orb-core {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e9d5ff 0%, #9333ea 70%, transparent 100%);
+  animation: mentalOrbPulse 2.2s infinite ease-in-out;
+}
+
+.mental-orb.speaking .mental-orb-core {
+  animation: mentalOrbSpeak 0.35s infinite alternate;
+}
+
+.mental-orb.breathing .mental-orb-core {
+  animation: mentalBreatheGuide 16s infinite ease-in-out !important;
+}
+
+@keyframes mentalBreatheGuide {
+  0%, 100% { transform: scale(0.75); }
+  25%, 50% { transform: scale(1.45); }
+  75% { transform: scale(0.75); }
+}
+
+@keyframes mentalOrbPulse {
+  0%, 100% { transform: scale(0.92); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes mentalOrbSpeak {
+  0% { transform: scale(0.85); }
+  100% { transform: scale(1.22); }
+}
+
+.m-zone-normal {
+  fill: rgba(16, 185, 129, 0.22);
+  stroke: #10b981;
+  stroke-width: 1.5;
+  transition: all 0.3s ease;
+}
+
+.m-zone-warning {
+  fill: rgba(245, 158, 11, 0.45);
+  stroke: #f59e0b;
+  stroke-width: 2;
+}
+
+.m-zone-mental {
+  fill: rgba(168, 85, 247, 0.55);
+  stroke: #c084fc;
+  stroke-width: 2.5;
+  animation: mPulse 1.8s infinite;
+}
+
+.m-zone-critical {
+  fill: rgba(244, 63, 94, 0.6);
+  stroke: #f43f5e;
+  stroke-width: 2.5;
+}
+
+@keyframes mPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
 /* Scrollbar personalizado para la bitácora */
-#eventLog::-webkit-scrollbar {
-  width: 4px;
-}
-
-#eventLog::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-}
-
-#eventLog::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.3);
-  border-radius: 4px;
-}
+#eventLog::-webkit-scrollbar { width: 4px; }
+#eventLog::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+#eventLog::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.3); border-radius: 4px; }
