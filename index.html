@@ -18,32 +18,7 @@
       }
     }
   </script>
-  <style>
-    body {
-      background-color: #020617;
-      background-image: 
-        radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.08), transparent 35%),
-        radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.07), transparent 35%);
-      font-family: 'Space Grotesk', sans-serif;
-    }
-    .glass-panel {
-      background: rgba(15, 23, 42, 0.72);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(51, 65, 85, 0.75);
-    }
-    .nav-item.active {
-      background: linear-gradient(90deg, rgba(6, 182, 212, 0.22) 0%, rgba(6, 182, 212, 0.03) 100%);
-      border-left: 3px solid #22d3ee;
-      color: #ffffff;
-    }
-    @keyframes alarm-glow {
-      0%, 100% { box-shadow: 0 0 35px rgba(244, 63, 94, 0.45); border-color: rgba(244, 63, 94, 0.95); }
-      50% { box-shadow: 0 0 10px rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.4); }
-    }
-    .critical-modal-box {
-      animation: alarm-glow 1.4s infinite;
-    }
-  </style>
+  <link rel="stylesheet" href="CSS/styles.css" />
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
 
@@ -60,8 +35,7 @@
 
   <!-- MENÚ LATERAL INTERACTIVO (SIDEBAR) -->
   <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 glass-panel border-r border-slate-800 flex flex-col justify-between p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 shrink-0">
-    <div class="space-y-6">
-      <!-- LOGO -->
+    <div class="space-y-5">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-amber-500/20">
@@ -77,40 +51,37 @@
         <button type="button" onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white text-lg">✕</button>
       </div>
 
-      <!-- NAVEGACIÓN PRINCIPAL -->
       <nav class="space-y-1.5">
         <span class="text-[10px] font-mono-tech uppercase tracking-widest text-slate-500 px-3 block mb-2">Módulos de Misión</span>
         
-        <button type="button" onclick="cambiarVista('view-telemetry', this)" class="nav-item active w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
-          <span class="flex items-center gap-2.5"><span>📡</span> Telemetría en Vivo</span>
+        <button id="nav-telemetry" type="button" onclick="cambiarVista('view-telemetry', this)" class="nav-item active w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+          <span class="flex items-center gap-2.5"><span>📡</span> Telemetría y Tendencia</span>
           <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
         </button>
 
-        <button type="button" onclick="cambiarVista('view-anatomy', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-anatomy" type="button" onclick="cambiarVista('view-anatomy', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🧬</span> Escáner Anatómico</span>
-          <span class="text-[10px] text-slate-500">HRP</span>
+          <span class="text-[10px] text-slate-500">5 PELIGROS</span>
         </button>
 
-        <button type="button" onclick="cambiarVista('view-checkup', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-checkup" type="button" onclick="cambiarVista('view-checkup', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🩺</span> Autoevaluación</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">INPUT</span>
         </button>
 
-        <button type="button" onclick="cambiarVista('view-prevention', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-prevention" type="button" onclick="cambiarVista('view-prevention', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🛡️</span> Prevención y Rutina</span>
           <span id="sidebarWellnessBadge" class="text-[10px] text-emerald-400 font-bold">75%</span>
         </button>
       </nav>
 
-      <!-- TRIPULACIÓN -->
-      <div class="pt-4 border-t border-slate-800/80">
+      <div class="pt-3 border-t border-slate-800/80">
         <span class="text-[10px] font-mono-tech uppercase tracking-widest text-slate-500 px-1 block mb-2">Tripulación Activa</span>
         <div id="crewList" class="space-y-1.5"></div>
       </div>
     </div>
 
-    <!-- PIE DEL SIDEBAR: GRAVEDAD Y RADIACIÓN DEL ENTORNO -->
-    <div class="pt-4 border-t border-slate-800/80 space-y-2.5">
+    <div class="pt-3 border-t border-slate-800/80 space-y-2.5">
       <div class="p-3 rounded-xl bg-slate-950/70 border border-cyan-500/20 flex items-center justify-between">
         <span class="text-[10px] font-mono-tech uppercase text-cyan-400">Gravedad Local</span>
         <span id="sidebarGravityBadge" class="text-xs font-mono-tech font-bold text-white">0.00 g (Microgravedad)</span>
@@ -130,17 +101,15 @@
   </aside>
 
   <!-- ÁREA PRINCIPAL -->
-  <div class="flex-grow flex flex-col p-4 md:p-6 gap-5 max-w-full">
+  <div class="flex-grow flex flex-col p-4 md:p-6 gap-4 max-w-full">
 
-    <!-- BARRA DE ESTADO SUPERIOR -->
     <header class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div>
-        <h2 id="viewHeaderTitle" class="text-base md:text-lg font-bold text-white">Telemetría Biomédica en Tiempo Real</h2>
+        <h2 id="viewHeaderTitle" class="text-base md:text-lg font-bold text-white">Telemetría Biomédica y Tendencia Temporal</h2>
         <p id="activeAstronautTitle" class="text-xs text-slate-400 font-mono-tech">Tripulante: Cmdt. Elena Vance // Módulo Orión</p>
       </div>
 
       <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
-        <!-- SELECTOR DE ESCENARIO PLANETARIO / GRAVEDAD -->
         <select id="envSelector" class="px-3 py-2 rounded-xl bg-slate-900 border border-amber-500/40 text-xs font-mono-tech text-amber-300 focus:outline-none cursor-pointer">
           <option value="leo">🛰 Órbita Baja ISS (0.00 g)</option>
           <option value="earth">🌍 Base Tierra / Reentrada (1.00 g)</option>
@@ -159,12 +128,24 @@
       </div>
     </header>
 
-    <!-- BANNER CONTEXTUAL DE GRAVEDAD Y RIESGO DEL ESCENARIO -->
+    <div id="routineReminderBanner" class="glass-panel rounded-2xl px-4 py-2.5 border border-amber-500/30 bg-amber-950/20 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2 text-amber-200">
+        <span>⏰</span>
+        <span id="reminderText"><strong>Rutina Programada (Sol 14 - 14:00 UTC):</strong> Registra tu presión arterial, horas de sueño y estado de ánimo diario.</span>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button type="button" onclick="cambiarVista('view-checkup', document.getElementById('nav-checkup'))" class="px-3 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-mono-tech text-[11px] cursor-pointer">
+          Registrar Ahora →
+        </button>
+        <button type="button" onclick="document.getElementById('routineReminderBanner').style.display='none'" class="text-slate-400 hover:text-white px-1.5 cursor-pointer">✕</button>
+      </div>
+    </div>
+
     <div id="scenarioContextBanner" class="glass-panel rounded-2xl p-3.5 border-l-4 border-l-cyan-400 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
       <div>
-        <span id="scenarioTitle" class="font-bold text-cyan-300 font-mono-tech uppercase">ENTORNO ACTUAL: ÓRBITA BAJA (0.00 g - MICROGRAVEDAD)</span>
+        <span id="scenarioTitle" class="font-bold text-cyan-300 font-mono-tech uppercase">ENTORNO ACTUAL: ÓRBITA BAJA ISS (0.00 g - MICROGRAVEDAD)</span>
         <p id="scenarioRiskDesc" class="text-slate-300 mt-0.5">
-          Riesgo dominante: Desplazamiento cefálico de fluidos (+2L hacia tórax/cabeza) y desorientación vestibular. Protocolos adaptados a ingravidez.
+          Riesgo dominante: Desplazamiento cefálico de fluidos (+2L hacia tórax/cabeza) y desorientación vestibular. Acostarse no tiene efecto hidrostático.
         </p>
       </div>
       <span id="scenarioProtocolTag" class="px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 font-mono-tech text-[11px] shrink-0">
@@ -173,60 +154,87 @@
     </div>
 
     <!-- ========================================================= -->
-    <!-- VISTA 1: TELEMETRÍA EN VIVO                               -->
+    <!-- VISTA 1: TELEMETRÍA EN VIVO + TENDENCIA TEMPORAL          -->
     <!-- ========================================================= -->
     <section id="view-telemetry" class="tab-view grid grid-cols-1 xl:grid-cols-12 gap-5 flex-grow">
-      <div class="xl:col-span-8 flex flex-col gap-5">
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div id="cardBpm" class="glass-panel rounded-2xl p-4 transition-all">
-            <span class="text-xs text-slate-400 block">Ritmo Cardíaco</span>
+      <div class="xl:col-span-8 flex flex-col gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+          <div id="cardBpm" class="glass-panel rounded-2xl p-3.5 transition-all">
+            <span class="text-[11px] text-slate-400 block">Ritmo Cardíaco</span>
             <div class="flex items-baseline gap-1 mt-1">
-              <span id="valBpm" class="text-2xl md:text-3xl font-bold font-mono-tech text-cyan-400">72</span>
-              <span class="text-xs text-slate-400">BPM</span>
+              <span id="valBpm" class="text-xl md:text-2xl font-bold font-mono-tech text-cyan-400">72</span>
+              <span class="text-[10px] text-slate-400">BPM</span>
             </div>
           </div>
 
-          <div id="cardSpo2" class="glass-panel rounded-2xl p-4 transition-all">
-            <span class="text-xs text-slate-400 block">Oxigenación (SpO₂)</span>
+          <div id="cardBp" class="glass-panel rounded-2xl p-3.5 transition-all">
+            <span class="text-[11px] text-slate-400 block">Presión Arterial</span>
             <div class="flex items-baseline gap-1 mt-1">
-              <span id="valSpo2" class="text-2xl md:text-3xl font-bold font-mono-tech text-emerald-400">98</span>
-              <span class="text-xs text-slate-400">%</span>
+              <span id="valBp" class="text-xl md:text-2xl font-bold font-mono-tech text-indigo-400">118/76</span>
             </div>
           </div>
 
-          <div id="cardGlucose" class="glass-panel rounded-2xl p-4 transition-all">
-            <span class="text-xs text-slate-400 block">Glucosa Sangre</span>
+          <div id="cardSpo2" class="glass-panel rounded-2xl p-3.5 transition-all">
+            <span class="text-[11px] text-slate-400 block">Oxigenación</span>
             <div class="flex items-baseline gap-1 mt-1">
-              <span id="valGlucose" class="text-2xl md:text-3xl font-bold font-mono-tech text-amber-400">94</span>
-              <span class="text-xs text-slate-400">mg/dL</span>
+              <span id="valSpo2" class="text-xl md:text-2xl font-bold font-mono-tech text-emerald-400">98</span>
+              <span class="text-[10px] text-slate-400">%</span>
             </div>
           </div>
 
-          <div id="cardPsi" class="glass-panel rounded-2xl p-4 transition-all">
-            <span class="text-xs text-slate-400 block">Presión Módulo/Traje</span>
+          <div id="cardGlucose" class="glass-panel rounded-2xl p-3.5 transition-all">
+            <span class="text-[11px] text-slate-400 block">Glucosa</span>
             <div class="flex items-baseline gap-1 mt-1">
-              <span id="valPsi" class="text-2xl md:text-3xl font-bold font-mono-tech text-purple-400">4.3</span>
-              <span class="text-xs text-slate-400">PSI</span>
+              <span id="valGlucose" class="text-xl md:text-2xl font-bold font-mono-tech text-amber-400">94</span>
+              <span class="text-[10px] text-slate-400">mg/dL</span>
+            </div>
+          </div>
+
+          <div id="cardTemp" class="glass-panel rounded-2xl p-3.5 transition-all">
+            <span class="text-[11px] text-slate-400 block">Temp. / Sueño</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="valTemp" class="text-lg md:text-xl font-bold font-mono-tech text-orange-400">36.7°</span>
+              <span id="valSleep" class="text-xs font-mono-tech text-slate-300">/ 7.2h</span>
+            </div>
+          </div>
+
+          <div id="cardMood" class="glass-panel rounded-2xl p-3.5 transition-all">
+            <span class="text-[11px] text-slate-400 block">Ánimo / Conducta</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="valMood" class="text-base md:text-lg font-bold font-mono-tech text-teal-400">Óptimo</span>
             </div>
           </div>
         </div>
 
-        <!-- MONITOR ECG EN VIVO -->
-        <div class="glass-panel rounded-2xl p-4 flex-grow flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-2">
-            <div>
-              <h3 class="text-sm font-semibold text-white">Monitor Electrocardiográfico (ECG)</h3>
-              <p class="text-xs text-slate-400">Calibrado automáticamente según carga gravitacional del entorno</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+          <div class="glass-panel rounded-2xl p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h3 class="text-sm font-semibold text-white">Electrocardiograma (ECG)</h3>
+                <p class="text-[11px] text-slate-400">Señal instantánea 500 Hz</p>
+              </div>
+              <span id="ecgBadge" class="text-[10px] font-mono-tech px-2 py-0.5 rounded bg-slate-800 text-cyan-400">NOMINAL</span>
             </div>
-            <span id="ecgBadge" class="text-xs font-mono-tech px-2 py-1 rounded bg-slate-800 text-cyan-400">500 Hz NOMINAL</span>
+            <div class="relative w-full h-44 bg-slate-950/90 rounded-xl border border-slate-800 overflow-hidden">
+              <canvas id="ecgCanvas" class="w-full h-full"></canvas>
+            </div>
           </div>
-          <div class="relative w-full h-56 bg-slate-950/90 rounded-xl border border-slate-800 overflow-hidden">
-            <canvas id="ecgCanvas" class="w-full h-full"></canvas>
+
+          <div class="glass-panel rounded-2xl p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h3 class="text-sm font-semibold text-white">Tendencia de Misión (7 Días)</h3>
+                <p class="text-[11px] text-slate-400">Evolución de BPM (cian) y Sueño (ámbar)</p>
+              </div>
+              <span class="text-[10px] font-mono-tech px-2 py-0.5 rounded bg-slate-800 text-amber-300">HISTÓRICO</span>
+            </div>
+            <div class="relative w-full h-44 bg-slate-950/90 rounded-xl border border-slate-800 overflow-hidden p-2">
+              <canvas id="trendCanvas" class="w-full h-full"></canvas>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- BITÁCORA DERECHA -->
       <div class="xl:col-span-4 glass-panel rounded-2xl p-4 flex flex-col">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-xs font-mono-tech uppercase tracking-wider text-slate-400">Bitácora de Telemetría IA</h3>
@@ -237,120 +245,215 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- VISTA 2: ESCÁNER ANATÓMICO INTERACTIVO (NASA HRP)         -->
+    <!-- VISTA 2: ESCÁNER HOLOGRÁFICO ANATÓMICO (NASA HRP)          -->
     <!-- ========================================================= -->
-    <section id="view-anatomy" style="display: none;" class="tab-view grid grid-cols-1 md:grid-cols-12 gap-6 flex-grow">
-      <div class="md:col-span-5 glass-panel rounded-2xl p-6 flex flex-col items-center justify-center">
-        <span class="text-xs font-mono-tech text-cyan-400 uppercase mb-3">Selecciona un nodo corporal</span>
-        <svg viewBox="0 0 120 220" class="w-48 h-72">
-          <circle cx="60" cy="25" r="14" fill="#1e293b" stroke="#475569" stroke-width="2"/>
-          <path d="M35,55 Q60,45 85,55 L92,115 L80,118 L75,75 L75,140 L82,205 L66,205 L60,145 L54,205 L38,205 L45,140 L45,75 L40,118 L28,115 Z" fill="#1e293b" stroke="#475569" stroke-width="2"/>
-          
-          <g class="cursor-pointer" onclick="seleccionarOrgano('neuro')">
-            <circle cx="60" cy="22" r="11" fill="rgba(56, 189, 248, 0.25)" />
-            <circle cx="60" cy="22" r="5" fill="#38bdf8" />
-          </g>
-          <g class="cursor-pointer" onclick="seleccionarOrgano('cardio')">
-            <circle cx="64" cy="72" r="11" fill="rgba(52, 211, 153, 0.25)" />
-            <circle cx="64" cy="72" r="5" fill="#34d399" />
-          </g>
-          <g class="cursor-pointer" onclick="seleccionarOrgano('metabolic')">
-            <circle cx="56" cy="105" r="11" fill="rgba(251, 191, 36, 0.25)" />
-            <circle cx="56" cy="105" r="5" fill="#fbbf24" />
-          </g>
-          <g class="cursor-pointer" onclick="seleccionarOrgano('musculo')">
-            <circle cx="43" cy="165" r="11" fill="rgba(167, 139, 250, 0.25)" />
-            <circle cx="43" cy="165" r="5" fill="#a78bfa" />
-          </g>
-        </svg>
-        <div class="flex flex-wrap justify-center gap-2 mt-4 text-[11px] font-mono-tech">
-          <button type="button" onclick="seleccionarOrgano('neuro')" class="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 cursor-pointer">Ojos / SANS</button>
-          <button type="button" onclick="seleccionarOrgano('cardio')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 cursor-pointer">Corazón</button>
-          <button type="button" onclick="seleccionarOrgano('metabolic')" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 cursor-pointer">Metabolismo</button>
-          <button type="button" onclick="seleccionarOrgano('musculo')" class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 cursor-pointer">Huesos</button>
+    <section id="view-anatomy" style="display: none;" class="tab-view grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+      
+      <div class="lg:col-span-5 glass-panel holo-grid rounded-2xl p-5 flex flex-col items-center justify-between relative overflow-hidden border border-cyan-500/30">
+        
+        <div class="w-full flex items-center justify-between text-[10px] font-mono-tech text-cyan-400 z-10">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            BIO-SCANNER 3D // ACTIVO
+          </span>
+          <span id="holoTargetCode" class="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30">SYS-01: NEURO</span>
+        </div>
+
+        <div class="relative my-2 flex items-center justify-center">
+          <div id="holoAmbientGlow" class="w-44 h-44 rounded-full bg-sky-500/15 blur-2xl absolute transition-colors duration-500"></div>
+
+          <svg viewBox="0 0 180 280" class="w-56 h-80 relative z-10 drop-shadow-[0_0_12px_rgba(34,211,238,0.25)]">
+            <defs>
+              <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="rgba(34, 211, 238, 0.25)" />
+                <stop offset="50%" stop-color="rgba(14, 165, 233, 0.12)" />
+                <stop offset="100%" stop-color="rgba(34, 211, 238, 0.25)" />
+              </linearGradient>
+              <linearGradient id="laserGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="transparent" />
+                <stop offset="50%" stop-color="#22d3ee" />
+                <stop offset="100%" stop-color="transparent" />
+              </linearGradient>
+            </defs>
+
+            <ellipse cx="90" cy="264" rx="52" ry="8" fill="none" stroke="rgba(34,211,238,0.35)" stroke-width="1.5" stroke-dasharray="4 3" />
+            <ellipse cx="90" cy="264" rx="32" ry="4" fill="rgba(34,211,238,0.15)" />
+
+            <path d="M90,14 C79,14 72,22 72,33 C72,42 77,49 83,52 L83,58 L62,64 C54,66 50,73 48,82 L38,134 C37,139 42,142 45,137 L57,92 L60,138 L55,205 L53,254 C53,259 61,259 63,254 L73,195 L86,154 L94,154 L107,195 L117,254 C119,259 127,259 127,254 L125,205 L120,138 L123,92 L135,137 C138,142 143,139 142,134 L132,82 C130,73 126,66 118,64 L97,58 L97,52 C103,49 108,42 108,33 C108,22 101,14 90,14 Z"
+                  fill="url(#bodyGrad)" stroke="#38bdf8" stroke-width="1.4" stroke-opacity="0.7" />
+
+            <line x1="90" y1="54" x2="90" y2="148" stroke="rgba(56,189,248,0.3)" stroke-width="1.5" stroke-dasharray="2 2" />
+            <path d="M74,78 Q90,85 106,78 M72,90 Q90,98 108,90 M74,102 Q90,110 106,102" fill="none" stroke="rgba(56,189,248,0.22)" stroke-width="1.2" />
+
+            <g class="scanner-laser">
+              <line x1="25" y1="0" x2="155" y2="0" stroke="url(#laserGrad)" stroke-width="2" />
+              <rect x="35" y="-6" width="110" height="6" fill="rgba(34,211,238,0.08)" />
+            </g>
+
+            <g id="activeReticle" transform="translate(90, 30)">
+              <circle cx="0" cy="0" r="15" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-dasharray="6 4" class="target-reticle" />
+              <line x1="-20" y1="0" x2="-12" y2="0" stroke="#ffffff" stroke-width="1.2" />
+              <line x1="12" y1="0" x2="20" y2="0" stroke="#ffffff" stroke-width="1.2" />
+            </g>
+
+            <g class="cursor-pointer" onclick="seleccionarOrgano('neuro')">
+              <circle cx="90" cy="30" r="10" fill="#38bdf8" class="node-ping" />
+              <circle cx="90" cy="30" r="6" fill="#38bdf8" stroke="#020617" stroke-width="1.5" />
+            </g>
+
+            <g class="cursor-pointer" onclick="seleccionarOrgano('cardio')">
+              <circle cx="96" cy="84" r="10" fill="#34d399" class="node-ping" />
+              <circle cx="96" cy="84" r="6" fill="#34d399" stroke="#020617" stroke-width="1.5" />
+            </g>
+
+            <g class="cursor-pointer" onclick="seleccionarOrgano('immune')">
+              <circle cx="84" cy="118" r="10" fill="#fbbf24" class="node-ping" />
+              <circle cx="84" cy="118" r="6" fill="#fbbf24" stroke="#020617" stroke-width="1.5" />
+            </g>
+
+            <g class="cursor-pointer" onclick="seleccionarOrgano('musculo')">
+              <circle cx="67" cy="186" r="10" fill="#a78bfa" class="node-ping" />
+              <circle cx="67" cy="186" r="6" fill="#a78bfa" stroke="#020617" stroke-width="1.5" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="w-full grid grid-cols-2 gap-2 text-[11px] font-mono-tech z-10">
+          <button id="btn-organ-neuro" type="button" onclick="seleccionarOrgano('neuro')" class="organ-pill px-3 py-2 rounded-xl bg-cyan-500/20 text-white border border-cyan-400 font-bold flex items-center justify-center gap-1.5 transition cursor-pointer shadow-lg shadow-cyan-500/10">
+            <span class="w-2 h-2 rounded-full bg-sky-400"></span> Ojos / Conducta
+          </button>
+          <button id="btn-organ-cardio" type="button" onclick="seleccionarOrgano('cardio')" class="organ-pill px-3 py-2 rounded-xl bg-slate-900/80 text-slate-400 border border-slate-800 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Corazón
+          </button>
+          <button id="btn-organ-immune" type="button" onclick="seleccionarOrgano('immune')" class="organ-pill px-3 py-2 rounded-xl bg-slate-900/80 text-slate-400 border border-slate-800 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span> Inmunidad
+          </button>
+          <button id="btn-organ-musculo" type="button" onclick="seleccionarOrgano('musculo')" class="organ-pill px-3 py-2 rounded-xl bg-slate-900/80 text-slate-400 border border-slate-800 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer">
+            <span class="w-2 h-2 rounded-full bg-purple-400"></span> Sistema Óseo
+          </button>
         </div>
       </div>
 
-      <div class="md:col-span-7 glass-panel rounded-2xl p-6 flex flex-col justify-between space-y-4">
-        <div>
-          <span id="organTag" class="text-xs font-mono-tech px-2.5 py-1 rounded bg-cyan-500/20 text-cyan-300">SISTEMA NEURO-OCULAR (SANS)</span>
-          <h3 id="organTitle" class="text-xl font-bold text-white mt-3">Redistribución Cefálica de Fluidos</h3>
-          <p id="organDesc" class="text-sm text-slate-300 mt-2 leading-relaxed">
-            En microgravedad, ~2 litros de líquido corporal migran hacia el tórax y la cabeza, elevando la presión intracraneal y aplanando el globo ocular.
+      <div class="lg:col-span-7 glass-panel rounded-2xl p-6 flex flex-col justify-between space-y-5">
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span id="organTag" class="text-xs font-mono-tech px-3 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30">
+              SISTEMA NEURO-OCULAR (SANS) Y CONDUCTUAL
+            </span>
+            <span id="organRiskBadge" class="text-xs font-mono-tech px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300">
+              RIESGO EN ENTORNO: ALTO (78%)
+            </span>
+          </div>
+
+          <h3 id="organTitle" class="text-xl md:text-2xl font-bold text-white">Redistribución Cefálica y Aislamiento</h3>
+          <p id="organDesc" class="text-sm text-slate-300 leading-relaxed">
+            En microgravedad, ~2 litros de líquido migran hacia la cabeza elevando la presión intracraneal. Además, el confinamiento y ciclos de luz cada 90 min alteran el sueño y el ánimo.
           </p>
+
+          <div class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-1.5">
+            <div class="flex justify-between text-[11px] font-mono-tech">
+              <span class="text-slate-400">Índice de Estrés Fisiológico en Misión</span>
+              <span id="organStressPct" class="text-sky-400 font-bold">78%</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2">
+              <div id="organStressBar" class="bg-sky-400 h-2 rounded-full transition-all duration-500" style="width: 78%"></div>
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
-            <strong class="text-amber-400 block mb-1">🔬 ¿Qué examen realizar?</strong>
-            <span id="organExam" class="text-slate-300">Tonometría intraocular, agudeza visual y escaneo OCT de retina cada 15 días.</span>
+            <strong class="text-amber-400 block mb-1.5 font-mono-tech">🔬 EXAMEN RECOMENDADO</strong>
+            <span id="organExam" class="text-slate-300 leading-relaxed">Tonometría intraocular, escaneo OCT de retina, registro diario de horas de sueño y test cognitivo.</span>
           </div>
           <div class="p-4 rounded-xl bg-slate-950/80 border border-slate-800">
-            <strong class="text-emerald-400 block mb-1">🛡️ Acción Preventiva NASA</strong>
-            <span id="organAction" class="text-slate-300">Uso de traje de presión negativa inferior (LBNP) por 45 min para drenar fluidos.</span>
+            <strong class="text-emerald-400 block mb-1.5 font-mono-tech">🛡️ CONTRAMEDIDA NASA</strong>
+            <span id="organAction" class="text-slate-300 leading-relaxed">Terapia de luz circadiana LED, traje de presión negativa (LBNP) y soporte psicológico periódico.</span>
           </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+          <span class="text-[11px] text-slate-400 font-mono-tech">¿Presentas síntomas en este sistema?</span>
+          <button type="button" onclick="cambiarVista('view-checkup', document.getElementById('nav-checkup'))" class="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-mono-tech text-xs transition cursor-pointer">
+            Evaluar Indicadores Ahora →
+          </button>
         </div>
       </div>
     </section>
 
     <!-- ========================================================= -->
-    <!-- VISTA 3: AUTOEVALUACIÓN MANUAL                            -->
+    <!-- VISTA 3: AUTOEVALUACIÓN MANUAL COMPLETA                   -->
     <!-- ========================================================= -->
     <section id="view-checkup" style="display: none;" class="tab-view glass-panel rounded-2xl p-6 space-y-5">
       <div>
-        <h3 class="text-base font-bold text-white">Autoevaluación Biomédica Manual</h3>
-        <p class="text-xs text-slate-400">El diagnóstico y el protocolo emergente se adaptarán automáticamente al escenario seleccionado arriba (Tierra 1g, ISS 0g, Luna 0.16g o Marte 0.38g).</p>
+        <h3 class="text-base font-bold text-white">Autoevaluación Biomédica y Conductual</h3>
+        <p class="text-xs text-slate-400">Evalúa tus indicadores físicos y mentales. Si algún parámetro es crítico, se activará el protocolo adaptado al entorno seleccionado.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
         <div>
           <label class="block text-slate-300 mb-1">Ritmo Cardíaco (BPM)</label>
           <input id="inputBpm" type="number" value="75" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
-          <span class="text-[11px] text-slate-500">Alerta crítica: &gt; 130 BPM</span>
+          <span class="text-[11px] text-slate-500">Alerta: &gt; 130 BPM</span>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 mb-1">Presión Arterial Sistólica (mmHg)</label>
+          <input id="inputSys" type="number" value="118" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+          <span class="text-[11px] text-slate-500">Alerta: &gt; 150 o &lt; 85 mmHg</span>
         </div>
 
         <div>
           <label class="block text-slate-300 mb-1">Glucosa en Sangre (mg/dL)</label>
           <input id="inputGlucose" type="number" value="94" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
-          <span class="text-[11px] text-slate-500">Alerta crítica: &gt; 160 o &lt; 65 mg/dL</span>
+          <span class="text-[11px] text-slate-500">Alerta: &gt; 160 o &lt; 65 mg/dL</span>
         </div>
 
         <div>
           <label class="block text-slate-300 mb-1">Oxigenación SpO₂ (%)</label>
           <input id="inputSpo2" type="number" value="98" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
-          <span class="text-[11px] text-slate-500">Alerta crítica: &lt; 91%</span>
+          <span class="text-[11px] text-slate-500">Alerta: &lt; 91%</span>
         </div>
 
         <div>
-          <label class="block text-slate-300 mb-1">Síntoma Reportado</label>
-          <select id="inputSymptom" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white">
-            <option value="none">Ninguno (Nominal)</option>
-            <option value="vision">Visión borrosa cercana (SANS)</option>
-            <option value="dizziness">Mareo ortostático / Vértigo</option>
-            <option value="chest">Opresión torácica / Irritación respiratoria</option>
+          <label class="block text-slate-300 mb-1">Temperatura Corporal (°C)</label>
+          <input id="inputTemp" type="number" step="0.1" value="36.7" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+          <span class="text-[11px] text-slate-500">Alerta: &gt; 38.2 °C</span>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 mb-1">Horas de Sueño (Últimas 24h)</label>
+          <input id="inputSleep" type="number" step="0.5" value="7.0" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+          <span class="text-[11px] text-slate-500">Alerta fatiga: &lt; 4.5 horas</span>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 mb-1">Estado de Ánimo / Confinamiento</label>
+          <select id="inputMood" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white">
+            <option value="Óptimo">Óptimo / Enfocado</option>
+            <option value="Fatiga">Fatiga mental leve</option>
+            <option value="Ansiedad">Ansiedad / Estrés por aislamiento</option>
           </select>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 mb-1">Imagen Ultrasonido / Piel</label>
+          <input id="inputScan" type="file" accept="image/*" class="w-full text-slate-400 file:mr-2 file:py-2 file:px-2.5 file:rounded-xl file:border-0 file:bg-slate-800 file:text-cyan-300 text-xs cursor-pointer" />
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center pt-2">
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Adjuntar captura de ultrasonido o lesión cutánea (Opcional)</label>
-          <input id="inputScan" type="file" accept="image/*" class="w-full text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-slate-800 file:text-cyan-300 text-xs cursor-pointer" />
-        </div>
-
-        <div class="flex flex-wrap justify-end gap-2">
-          <button type="button" onclick="simularValoresAltos()" class="px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-mono-tech text-xs cursor-pointer">
-            ⚡ Cargar Valores Críticos de Prueba
-          </button>
-          <button type="button" onclick="evaluarSaludLocal()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer">
-            Analizar Indicadores
-          </button>
-        </div>
+      <div class="flex flex-wrap justify-end gap-2 pt-2">
+        <button type="button" onclick="simularValoresAltos()" class="px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-mono-tech text-xs cursor-pointer">
+          ⚡ Cargar Valores Críticos de Prueba
+        </button>
+        <button type="button" onclick="evaluarSaludLocal()" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition cursor-pointer">
+          Analizar Indicadores y Actualizar Gráfica
+        </button>
       </div>
 
       <div id="diagnosisBox" class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 text-xs space-y-1">
         <strong class="text-cyan-400 block font-mono-tech">DIAGNÓSTICO LOCAL:</strong>
-        <p id="checkupResult" class="text-slate-300">Cambia el entorno arriba (Tierra, ISS, Luna o Marte) y presiona "Cargar Valores Críticos de Prueba" + "Analizar Indicadores" para ver cómo cambia el protocolo médico.</p>
+        <p id="checkupResult" class="text-slate-300">Ingresa tus parámetros y presiona "Analizar Indicadores" para evaluar tu estado y actualizar la tendencia de 7 días.</p>
       </div>
     </section>
 
@@ -378,15 +481,15 @@
           <input type="checkbox" checked onchange="actualizarBienestar()" class="wellness-task accent-emerald-500 w-4 h-4" />
           <div>
             <strong class="text-white block">Ejercicio Resistivo ARED (90 min)</strong>
-            <span class="text-slate-400">Previene pérdida de densidad ósea y atrofia muscular.</span>
+            <span class="text-slate-400">Previene pérdida de densidad ósea y desacondicionamiento cardíaco.</span>
           </div>
         </label>
 
         <label class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center gap-3 cursor-pointer hover:border-emerald-500/40">
           <input type="checkbox" checked onchange="actualizarBienestar()" class="wellness-task accent-emerald-500 w-4 h-4" />
           <div>
-            <strong class="text-white block">Suplementación Vitamina D3 (800 UI)</strong>
-            <span class="text-slate-400">Compensa la ausencia de radiación UV filtrada en cabina.</span>
+            <strong class="text-white block">Suplementación Vitamina D3 + Antioxidantes</strong>
+            <span class="text-slate-400">Fortalece el sistema inmunológico frente a radiación espacial.</span>
           </div>
         </label>
 
@@ -401,8 +504,8 @@
         <label class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center gap-3 cursor-pointer hover:border-emerald-500/40">
           <input type="checkbox" onchange="actualizarBienestar()" class="wellness-task accent-emerald-500 w-4 h-4" />
           <div>
-            <strong class="text-white block">Escaneo Ocular y Tonometría</strong>
-            <span class="text-slate-400">Detección temprana de edema del nervio óptico (SANS).</span>
+            <strong class="text-white block">Higiene Circadiana y Escaneo Ocular</strong>
+            <span class="text-slate-400">Control de sueño (7-8h) y prevención de edema óptico (SANS).</span>
           </div>
         </label>
       </div>
@@ -416,40 +519,34 @@
   <div id="criticalModal" style="display: none;" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="critical-modal-box bg-slate-900 border-2 border-rose-500 rounded-3xl max-w-xl w-full p-6 space-y-4 relative max-h-[90vh] overflow-y-auto">
       
-      <div class="flex items-start justify-between gap-3">
-        <div class="flex items-start gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/50 flex items-center justify-center text-2xl shrink-0">
-            🚨
-          </div>
-          <div>
-            <span id="modalScenarioBadge" class="text-[10px] font-mono-tech uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
-              PROTOCOLO GRAVEDAD 0.00g (ISS)
-            </span>
-            <h3 class="text-lg font-bold text-white mt-1">Descompensación Sistémica Detectada</h3>
-            <p id="modalAstronautName" class="text-xs text-slate-400 font-mono-tech">Tripulante: Cmdt. Elena Vance</p>
-          </div>
+      <div class="flex items-start gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/50 flex items-center justify-center text-2xl shrink-0">
+          🚨
+        </div>
+        <div>
+          <span id="modalScenarioBadge" class="text-[10px] font-mono-tech uppercase tracking-widest px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
+            PROTOCOLO GRAVEDAD 0.00g (ISS)
+          </span>
+          <h3 class="text-lg font-bold text-white mt-1">Descompensación Sistémica Detectada</h3>
+          <p id="modalAstronautName" class="text-xs text-slate-400 font-mono-tech">Tripulante: Cmdt. Elena Vance</p>
         </div>
       </div>
 
-      <!-- EXPLICACIÓN DE POR QUÉ CAMBIA EL PROTOCOLO SEGÚN LA GRAVEDAD -->
       <div class="p-3 rounded-xl bg-amber-950/30 border border-amber-500/30 text-xs text-amber-200">
         <strong class="block font-mono-tech text-amber-400 mb-0.5">⚖️ FACTOR GRAVITACIONAL Y AMBIENTAL:</strong>
-        <span id="modalGravityReason">En microgravedad (0g), acostar al tripulante no redirige el flujo sanguíneo. Se requiere succión negativa inferior.</span>
+        <span id="modalGravityReason"></span>
       </div>
 
-      <!-- INDICADORES ALTERADOS -->
       <div class="p-3.5 rounded-2xl bg-rose-950/50 border border-rose-500/40 space-y-1.5">
         <span class="text-xs font-mono-tech font-bold text-rose-300 block">PARÁMETROS FUERA DE RANGO SEGURO:</span>
         <ul id="criticalFindingsList" class="text-xs text-rose-100 space-y-1 list-disc list-inside"></ul>
       </div>
 
-      <!-- RECOMENDACIONES ESPECÍFICAS DEL PLANETA / ENTORNO -->
       <div class="p-4 rounded-2xl bg-slate-950/90 border border-cyan-500/30 space-y-2">
-        <span id="modalProtocolHeader" class="text-xs font-mono-tech font-bold text-cyan-400 block">🩺 ACCIONES DE REGULARIZACIÓN PARA ÓRBITA BAJA:</span>
+        <span id="modalProtocolHeader" class="text-xs font-mono-tech font-bold text-cyan-400 block">🩺 ACCIONES DE REGULARIZACIÓN:</span>
         <ol id="criticalRecommendationsList" class="text-xs text-slate-200 space-y-2 list-decimal list-inside leading-relaxed"></ol>
       </div>
 
-      <!-- BOTONES DE ACCIÓN -->
       <div class="flex flex-col sm:flex-row justify-end gap-2.5 pt-2">
         <button type="button" onclick="cerrarModalCritico()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono-tech cursor-pointer">
           Mantener Monitoreo
@@ -462,433 +559,6 @@
     </div>
   </div>
 
-  <!-- ========================================================= -->
-  <!-- SCRIPT LOCAL CON PROTOCOLOS MULTI-GRAVEDAD                -->
-  <!-- ========================================================= -->
-  <script>
-    const titulosVistas = {
-      'view-telemetry': 'Telemetría Biomédica en Tiempo Real',
-      'view-anatomy': 'Escáner Anatómico Interactivo (NASA HRP)',
-      'view-checkup': 'Autoevaluación Biomédica Manual',
-      'view-prevention': 'Protocolo Diario de Prevención y Contramedidas'
-    };
-
-    // CONFIGURACIÓN CIENTÍFICA POR ESCENARIO (GRAVEDAD, RADIACIÓN Y PROTOCOLOS MÉDICOS)
-    const escenariosConfig = {
-      leo: {
-        nombre: 'ÓRBITA BAJA ISS',
-        gravedad: '0.00 g (Microgravedad)',
-        latencia: '1.2s LATENCIA',
-        radVal: '0.42 mSv/h',
-        radPct: '35%',
-        radStatus: 'Escudo magnético terrestre activo. Exposición nominal.',
-        bannerTitle: 'ENTORNO ACTUAL: ÓRBITA BAJA ISS (0.00 g - MICROGRAVEDAD)',
-        bannerDesc: 'Riesgo dominante: Desplazamiento cefálico de fluidos (+2L hacia tórax/cabeza) y desorientación vestibular. Acostarse no tiene efecto hidrostático.',
-        tag: 'PROTOCOLO: ZERO-G',
-        razonGravedad: 'Al no existir gravedad (0.00 g), elevar las piernas no devuelve sangre al corazón porque los fluidos flotan hacia la cabeza. El tratamiento debe forzar el retorno venoso mecánicamente.',
-        pasosEmergencia: [
-          'Asegurar al tripulante con arneses en el módulo médico para evitar flotación involuntaria durante espasmos o síncope.',
-          'Colocar pantalones de Presión Negativa Inferior (LBNP / Chibis) a -40 mmHg para drenar el exceso de fluido acumulado en el cráneo y tórax.',
-          'Administrar oxígeno al 100% mediante mascarilla cerrada y estabilizar presión de cabina a 14.7 PSI (o traje a 4.3 PSI).',
-          'Realizar respiración vagal lenta (4s inhalar / 6s exhalar) y suministrar solución electrolítica por bolsa presurizada.'
-        ]
-      },
-      earth: {
-        nombre: 'BASE TIERRA / REENTRADA',
-        gravedad: '1.00 g (Gravedad Terrestre)',
-        latencia: '0.0s TIEMPO REAL',
-        radVal: '0.0003 mSv/h',
-        radPct: '5%',
-        radStatus: 'Atmósfera y magnetósfera completas. Radiación basal terrestre.',
-        bannerTitle: 'ENTORNO ACTUAL: TIERRA / POST-ATERRIZAJE (1.00 g - GRAVEDAD COMPLETA)',
-        bannerDesc: 'Riesgo dominante: Intolerancia ortostática severa. Tras volver del espacio, la gravedad 1g arrastra la sangre hacia las piernas causando desmayos y taquicardia.',
-        tag: 'PROTOCOLO: 1G-REENTRY',
-        razonGravedad: 'Bajo gravedad completa (1.00 g), el sistema cardiovascular desacondicionado pierde presión al estar de pie porque la sangre cae por peso hacia las extremidades inferiores.',
-        pasosEmergencia: [
-          'Colocar al tripulante inmediatamente en posición supina (acostado boca arriba) con piernas elevadas a 30° para usar la gravedad 1g a favor del riego cerebral.',
-          'Activar inflado de trajes anti-G neumáticos en pantorrillas y muslos para impedir el estancamiento venoso.',
-          'Administrar carga hídrica oral o intravenosa de 1,000 ml de solución salina isotónica para restaurar volumen plasmático.',
-          'Evitar incorporar al paciente verticalmente hasta que el ritmo cardíaco baje de 95 BPM en reposo.'
-        ]
-      },
-      moon: {
-        nombre: 'BASE LUNAR ARTEMIS',
-        gravedad: '0.16 g (1/6 Gravedad Terrestre)',
-        latencia: '2.6s LUNA',
-        radVal: '1.35 mSv/h',
-        radPct: '68%',
-        radStatus: 'Sin atmósfera ni campo magnético. Alerta por tormenta solar y regolito.',
-        bannerTitle: 'ENTORNO ACTUAL: SUPERFICIE LUNAR ARTEMIS (0.16 g - GRAVEDAD PARCIAL)',
-        bannerDesc: 'Riesgo dominante: Toxicidad pulmonar por polvo de regolito lunar (silicatos abrasivos), radiación solar directa y sobreesfuerzo metabólico en caminatas.',
-        tag: 'PROTOCOLO: LUNAR-0.16G',
-        razonGravedad: 'Con 0.16 g existe una leve columna hidrostática, pero el peligro crítico en superficie lunar es la hipoxia por inhalación de regolito fino y la hipertermia dentro del traje xEMU.',
-        pasosEmergencia: [
-          'Retirar al astronauta hacia el hábitat presurizado o rover y ejecutar protocolo de descontaminación electrostática de regolito antes de abrir el casco.',
-          'Inclinar la camilla médica a 15° (semi-Fowler) aprovechando el 0.16 g lunar para facilitar la expansión pulmonar.',
-          'Suministrar oxígeno hiperbárico filtrado al 100% para contrarrestar inflamación alveolar por polvo lunar y elevar SpO₂ > 96%.',
-          'Activar enfriamiento líquido máximo en la prenda interior (LCVG) y reponer glucosa/electrolitos.'
-        ]
-      },
-      mars: {
-        nombre: 'SUPERFICIE MARTE',
-        gravedad: '0.38 g (38% Gravedad Terrestre)',
-        latencia: '14m AUTÓNOMO',
-        radVal: '2.10 mSv/h',
-        radPct: '88%',
-        radStatus: 'Radiación cósmica galáctica elevada. Comunicación diferida con Tierra.',
-        bannerTitle: 'ENTORNO ACTUAL: SUPERFICIE MARCIANA (0.38 g - AUTONOMÍA TOTAL)',
-        bannerDesc: 'Riesgo dominante: Retardo de comunicación de 14–22 min con Tierra (imposible telemedicina en vivo), exposición a percloratos tóxicos y descalcificación ósea.',
-        tag: 'PROTOCOLO: MARS-AUTONOMOUS',
-        razonGravedad: 'En Marte (0.38 g), la gravedad parcial no evita la fragilidad ósea y la latencia impide ayuda inmediata desde Houston. La tripulación debe ejecutar soporte vital autónomo.',
-        pasosEmergencia: [
-          'Activar el Modo Médico Autónomo Local (sin esperar confirmación de Houston por retardo de 14 minutos).',
-          'Aislar al tripulante en el refugio blindado contra radiación (paredes de agua/polietileno) si el índice Tonalli supera 1.8 mSv/h.',
-          'Estabilizar hemodinamia en camilla con inclinación de 10°, administrar suero intravenoso y monitorear niveles de tiroides/glucosa por posible exposición a percloratos.',
-          'Registrar paquete comprimido de telemetría de crisis para transmisión diferida a médicos de vuelo en Tierra.'
-        ]
-      }
-    };
-
-    let escenarioActual = 'leo';
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('-translate-x-full');
-    }
-
-    function cambiarVista(idVista, botonActivo) {
-      document.querySelectorAll('.tab-view').forEach(sec => sec.style.display = 'none');
-      const destino = document.getElementById(idVista);
-      destino.style.display = destino.classList.contains('grid') ? 'grid' : 'block';
-
-      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-      botonActivo.classList.add('active');
-
-      document.getElementById('viewHeaderTitle').textContent = titulosVistas[idVista];
-
-      if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.add('-translate-x-full');
-      }
-    }
-
-    // CAMBIO DE ESCENARIO PLANETARIO
-    document.getElementById('envSelector').addEventListener('change', (e) => {
-      escenarioActual = e.target.value;
-      const cfg = escenariosConfig[escenarioActual];
-
-      document.getElementById('commsLabel').textContent = cfg.latencia;
-      document.getElementById('radiationVal').textContent = cfg.radVal;
-      document.getElementById('radiationBar').style.width = cfg.radPct;
-      document.getElementById('radiationStatus').textContent = cfg.radStatus;
-      document.getElementById('sidebarGravityBadge').textContent = cfg.gravedad;
-
-      document.getElementById('scenarioTitle').textContent = cfg.bannerTitle;
-      document.getElementById('scenarioRiskDesc').textContent = cfg.bannerDesc;
-      document.getElementById('scenarioProtocolTag').textContent = cfg.tag;
-
-      registrarBitacora(`Escenario cambiado a ${cfg.nombre} (${cfg.gravedad}). Protocolos médicos recalibrados.`);
-    });
-
-    // DATOS DE TRIPULACIÓN
-    const tripulacion = [
-      { id: 0, nombre: 'Cmdt. Elena Vance', modulo: 'Módulo Orión', bpm: 72, spo2: 98, glucose: 94, psi: 4.3, estado: 'Nominal' },
-      { id: 1, nombre: 'Ing. Mateo Silva', modulo: 'Esclusa EVA', bpm: 84, spo2: 97, glucose: 102, psi: 4.2, estado: 'En EVA' },
-      { id: 2, nombre: 'Dra. Sora Takahashi', modulo: 'Lab. Kibo', bpm: 68, spo2: 99, glucose: 89, psi: 4.3, estado: 'Nominal' }
-    ];
-    let astronautaActual = 0;
-    let modoEmergencia = false;
-
-    function registrarBitacora(mensaje, tipo = 'info') {
-      const log = document.getElementById('eventLog');
-      const hora = new Date().toLocaleTimeString('es-MX', { hour12: false });
-      const estilo = tipo === 'alert' ? 'text-rose-300 border-rose-500/40 bg-rose-950/40' :
-                     tipo === 'ok' ? 'text-emerald-300 border-emerald-500/30 bg-emerald-950/30' :
-                     'text-slate-300 border-slate-800 bg-slate-950/60';
-      const item = document.createElement('div');
-      item.className = `p-2.5 rounded-xl border ${estilo}`;
-      item.innerHTML = `<span class="text-slate-500">[${hora}]</span> ${mensaje}`;
-      log.prepend(item);
-    }
-
-    function renderizarTripulacion() {
-      const contenedor = document.getElementById('crewList');
-      contenedor.innerHTML = '';
-      tripulacion.forEach((astro, idx) => {
-        const activo = idx === astronautaActual;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `w-full text-left p-2.5 rounded-xl border transition cursor-pointer ${
-          activo ? 'bg-cyan-500/15 border-cyan-500/50 text-white' : 'bg-slate-950/50 border-slate-800/80 text-slate-400 hover:border-slate-700'
-        }`;
-        btn.innerHTML = `
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold">${astro.nombre}</span>
-            <span class="text-[10px] font-mono-tech px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300">${astro.estado}</span>
-          </div>
-          <span class="text-[10px] text-slate-400 block mt-0.5">${astro.modulo}</span>
-        `;
-        btn.onclick = () => {
-          astronautaActual = idx;
-          actualizarMetricas();
-          renderizarTripulacion();
-          registrarBitacora(`Enfoque biomédico cambiado a ${astro.nombre}.`);
-        };
-        contenedor.appendChild(btn);
-      });
-    }
-
-    function actualizarMetricas() {
-      const a = tripulacion[astronautaActual];
-      document.getElementById('activeAstronautTitle').textContent = `Tripulante: ${a.nombre} // ${a.modulo}`;
-      document.getElementById('valBpm').textContent = a.bpm;
-      document.getElementById('valSpo2').textContent = a.spo2;
-      document.getElementById('valGlucose').textContent = a.glucose;
-      document.getElementById('valPsi').textContent = a.psi.toFixed(1);
-
-      document.getElementById('cardBpm').className = `glass-panel rounded-2xl p-4 transition-all ${a.bpm > 130 ? 'border-rose-500 bg-rose-950/40' : ''}`;
-      document.getElementById('cardSpo2').className = `glass-panel rounded-2xl p-4 transition-all ${a.spo2 < 91 ? 'border-rose-500 bg-rose-950/40' : ''}`;
-      document.getElementById('cardGlucose').className = `glass-panel rounded-2xl p-4 transition-all ${(a.glucose > 160 || a.glucose < 65) ? 'border-rose-500 bg-rose-950/40' : ''}`;
-      document.getElementById('cardPsi').className = `glass-panel rounded-2xl p-4 transition-all ${a.psi < 3.5 ? 'border-rose-500 bg-rose-950/40' : ''}`;
-
-      const badge = document.getElementById('ecgBadge');
-      if (modoEmergencia) {
-        badge.textContent = '500 Hz ALERTA';
-        badge.className = 'text-xs font-mono-tech px-2 py-1 rounded bg-rose-500/20 text-rose-400 border border-rose-500/40';
-      } else {
-        badge.textContent = '500 Hz NOMINAL';
-        badge.className = 'text-xs font-mono-tech px-2 py-1 rounded bg-slate-800 text-cyan-400';
-      }
-    }
-
-    // VENTANA EMERGENTE ADAPTADA AL ESCENARIO (TIERRA vs ISS vs LUNA vs MARTE)
-    function abrirModalCritico(hallazgos, recomendacionesExtra = []) {
-      const a = tripulacion[astronautaActual];
-      const cfg = escenariosConfig[escenarioActual];
-
-      document.getElementById('modalScenarioBadge').textContent = `PROTOCOLO ${cfg.nombre} • ${cfg.gravedad}`;
-      document.getElementById('modalAstronautName').textContent = `Tripulante afectado: ${a.nombre} (${a.modulo})`;
-      document.getElementById('modalGravityReason').textContent = cfg.razonGravedad;
-      document.getElementById('modalProtocolHeader').textContent = `🩺 ACCIONES DE REGULARIZACIÓN PARA ${cfg.nombre}:`;
-
-      const ulHallazgos = document.getElementById('criticalFindingsList');
-      ulHallazgos.innerHTML = hallazgos.map(h => `<li>${h}</li>`).join('');
-
-      // Combinar protocolo gravitacional del escenario + acciones específicas de los valores alterados
-      const pasosFinales = [...cfg.pasosEmergencia, ...recomendacionesExtra];
-      const olRecs = document.getElementById('criticalRecommendationsList');
-      olRecs.innerHTML = pasosFinales.map(r => `<li>${r}</li>`).join('');
-
-      document.getElementById('criticalModal').style.display = 'flex';
-    }
-
-    function cerrarModalCritico() {
-      document.getElementById('criticalModal').style.display = 'none';
-    }
-
-    function ejecutarEstabilizacion() {
-      const a = tripulacion[astronautaActual];
-      const cfg = escenariosConfig[escenarioActual];
-      a.bpm = 74;
-      a.spo2 = 98;
-      a.glucose = 95;
-      a.psi = 4.3;
-      a.estado = 'Estabilizado';
-      modoEmergencia = false;
-
-      actualizarMetricas();
-      renderizarTripulacion();
-      cerrarModalCritico();
-      registrarBitacora(`Protocolo ${cfg.tag} completado. Signos vitales normalizados en ${a.nombre}.`, 'ok');
-    }
-
-    // SIMULAR CRISIS EN EL ENTORNO ACTUAL
-    document.getElementById('btnEmergency').addEventListener('click', () => {
-      const a = tripulacion[astronautaActual];
-      const cfg = escenariosConfig[escenarioActual];
-      a.bpm = 154;
-      a.spo2 = 88;
-      a.glucose = 195;
-      a.psi = 3.1;
-      a.estado = 'CRÍTICO';
-      modoEmergencia = true;
-
-      actualizarMetricas();
-      renderizarTripulacion();
-      registrarBitacora(`ALERTA CRÍTICA en ${cfg.nombre}: Descompensación sistémica en ${a.nombre}.`, 'alert');
-
-      abrirModalCritico([
-        `Taquicardia severa: ${a.bpm} BPM (Rango seguro: 60–100 BPM)`,
-        `Hipoxia arterial: ${a.spo2}% SpO₂ (Umbral mínimo: 94%)`,
-        `Hiperglucemia aguda por estrés: ${a.glucose} mg/dL`,
-        `Caída de presión ambiental/traje: ${a.psi} PSI`
-      ]);
-    });
-
-    // AUTOEVALUACIÓN MANUAL (VISTA 3)
-    function simularValoresAltos() {
-      document.getElementById('inputBpm').value = 146;
-      document.getElementById('inputGlucose').value = 210;
-      document.getElementById('inputSpo2').value = 89;
-      document.getElementById('inputSymptom').value = 'dizziness';
-    }
-
-    function evaluarSaludLocal() {
-      const bpm = parseFloat(document.getElementById('inputBpm').value);
-      const glucosa = parseFloat(document.getElementById('inputGlucose').value);
-      const spo2 = parseFloat(document.getElementById('inputSpo2').value);
-      const sintoma = document.getElementById('inputSymptom').value;
-      const archivo = document.getElementById('inputScan').files[0];
-
-      const a = tripulacion[astronautaActual];
-      const cfg = escenariosConfig[escenarioActual];
-      a.bpm = bpm;
-      a.glucose = glucosa;
-      a.spo2 = spo2;
-
-      let hallazgos = [];
-      let recsExtra = [];
-
-      if (bpm > 130) {
-        hallazgos.push(`Ritmo cardíaco elevado (${bpm} BPM).`);
-      }
-      if (glucosa > 160) {
-        hallazgos.push(`Hiperglucemia detectada (${glucosa} mg/dL).`);
-        recsExtra.push('Suspender carbohidratos simples durante 3 horas y monitorear cetonas en sangre.');
-      } else if (glucosa < 65) {
-        hallazgos.push(`Hipoglucemia crítica (${glucosa} mg/dL).`);
-        recsExtra.push('Suministrar inmediatamente 15g de gel de glucosa de absorción rápida.');
-      }
-      if (spo2 < 91) {
-        hallazgos.push(`Saturación de oxígeno crítica (${spo2}% SpO₂).`);
-      }
-      if (sintoma !== 'none') {
-        hallazgos.push(`Síntoma reportado: ${sintoma.toUpperCase()}.`);
-      }
-
-      const salida = document.getElementById('checkupResult');
-
-      if (hallazgos.length > 0) {
-        modoEmergencia = true;
-        a.estado = 'ALERTA';
-        actualizarMetricas();
-        renderizarTripulacion();
-        salida.innerHTML = `🚨 <strong>ALERTA EN ${cfg.nombre}:</strong> Protocolo específico para ${cfg.gravedad} desplegado.`;
-        salida.className = 'text-rose-400 font-semibold';
-        registrarBitacora(`Autoevaluación crítica en ${cfg.nombre} (${a.nombre}).`, 'alert');
-        abrirModalCritico(hallazgos, recsExtra);
-      } else {
-        modoEmergencia = false;
-        a.estado = 'Nominal';
-        actualizarMetricas();
-        renderizarTripulacion();
-        let msg = `✅ Parámetros (${bpm} BPM, ${glucosa} mg/dL, ${spo2}% SpO₂) estables para el entorno ${cfg.nombre}.`;
-        if (archivo) msg += ` Imagen "${archivo.name}" archivada sin anomalías.`;
-        salida.innerHTML = msg;
-        salida.className = 'text-emerald-300';
-        registrarBitacora(`Autoevaluación nominal en ${cfg.nombre} para ${a.nombre}.`, 'ok');
-      }
-    }
-
-    // ESCÁNER ANATÓMICO
-    const organData = {
-      neuro: {
-        tag: 'SISTEMA NEURO-OCULAR (SANS)',
-        title: 'Redistribución Cefálica de Fluidos',
-        desc: 'En microgravedad (0g), ~2 litros de líquido migran hacia la cabeza, elevando la presión intracraneal y deformando el nervio óptico.',
-        exam: 'Tonometría intraocular, agudeza visual y escaneo OCT de retina.',
-        action: 'Aplicar presión negativa inferior (LBNP) en 0g, o inclinación de 15° en Luna/Marte.'
-      },
-      cardio: {
-        tag: 'SISTEMA CARDIOVASCULAR',
-        title: 'Desacondicionamiento Cardíaco y Ortostatismo',
-        desc: 'El corazón reduce su masa en 0g; al aterrizar en Tierra (1g) o Marte (0.38g), la gravedad arrastra sangre a las piernas provocando síncopes.',
-        exam: 'ECG continuo de 500 Hz, presión arterial y prueba de tolerancia ortostática.',
-        action: 'Carga de fluidos isotónicos y trajes compresivos anti-G antes de reentrada planetaria.'
-      },
-      metabolic: {
-        tag: 'METABOLISMO Y RADIACIÓN',
-        title: 'Estrés Oxidativo y Resistencia a la Insulina',
-        desc: 'La radiación cósmica en Luna y Marte eleva el cortisol y altera el metabolismo glucémico.',
-        exam: 'Glucemia capilar en ayunas (mg/dL) y dosimetría acumulada Tonalli.',
-        action: 'Dieta rica en antioxidantes y refugio en zona blindada contra tormentas solares.'
-      },
-      musculo: {
-        tag: 'SISTEMA MUSCULOESQUELÉTICO',
-        title: 'Osteopenia Espacial y Atrofia Muscular',
-        desc: 'En 0g se pierde 1.5% de densidad ósea al mes; en Luna (0.16g) y Marte (0.38g) la carga parcial sigue siendo insuficiente sin ejercicio.',
-        exam: 'Densitometría ósea y monitoreo de fuerza isocinética.',
-        action: 'Sesión obligatoria de 90 min en equipo resistivo ARED + Vitamina D3.'
-      }
-    };
-
-    function seleccionarOrgano(clave) {
-      const info = organData[clave];
-      document.getElementById('organTag').textContent = info.tag;
-      document.getElementById('organTitle').textContent = info.title;
-      document.getElementById('organDesc').textContent = info.desc;
-      document.getElementById('organExam').textContent = info.exam;
-      document.getElementById('organAction').textContent = info.action;
-    }
-
-    // GAMIFICACIÓN
-    function actualizarBienestar() {
-      const total = document.querySelectorAll('.wellness-task').length;
-      const marcadas = document.querySelectorAll('.wellness-task:checked').length;
-      const pct = Math.round((marcadas / total) * 100);
-      document.getElementById('wellnessScore').textContent = pct + '%';
-      document.getElementById('sidebarWellnessBadge').textContent = pct + '%';
-      document.getElementById('wellnessBar').style.width = pct + '%';
-      registrarBitacora(`Índice preventivo actualizado al ${pct}%.`, 'ok');
-    }
-
-    // ECG EN VIVO
-    const canvas = document.getElementById('ecgCanvas');
-    const ctx = canvas.getContext('2d');
-    let x = 0;
-    let ultimoY = 90;
-
-    function dibujarECG() {
-      if (canvas.width !== canvas.offsetWidth && canvas.offsetWidth > 0) {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        ultimoY = canvas.height / 2;
-      }
-      const mid = canvas.height / 2;
-      const velocidad = modoEmergencia ? 5.2 : 2.5;
-
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.14)';
-      ctx.fillRect(x, 0, 16, canvas.height);
-
-      ctx.strokeStyle = modoEmergencia ? '#f43f5e' : '#22d3ee';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, ultimoY);
-
-      x += velocidad;
-      if (x > canvas.width) {
-        x = 0;
-        ctx.moveTo(0, mid);
-      }
-
-      const ciclo = (x % (modoEmergencia ? 44 : 95));
-      let y = mid + (Math.random() * 4 - 2);
-      if (ciclo > 10 && ciclo < 15) y = mid - 10;
-      else if (ciclo >= 15 && ciclo < 20) y = mid + 12;
-      else if (ciclo >= 20 && ciclo < 26) y = mid - (modoEmergencia ? 68 : 48);
-      else if (ciclo >= 26 && ciclo < 32) y = mid + 22;
-      else if (ciclo >= 40 && ciclo < 50) y = mid - 12;
-
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      ultimoY = y;
-
-      requestAnimationFrame(dibujarECG);
-    }
-
-    // ARRANQUE INICIAL
-    renderizarTripulacion();
-    actualizarMetricas();
-    registrarBitacora('Sistema Multi-Gravedad Tonalli Vital iniciado.');
-    dibujarECG();
-  </script>
+  <script src="JS/app.js"></script>
 </body>
 </html>
