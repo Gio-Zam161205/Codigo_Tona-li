@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- =========================================================================
-       PROYECTO: TONALLI VITAL // Centro de Mando Biomédico Multi-Gravedad
-       ARCHIVO:  index.html
-       DESCRIPCIÓN: Estructura principal SPA (Single Page Application) que integra
-                    telemetría en tiempo real, gestión dinámica de tripulación,
-                    escáner holográfico SVG (NASA HRP), autoevaluación clínica
-                    y modal de respuesta autónoma.
-       ========================================================================= -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tonalli Vital // Centro de Mando Biomédico Multi-Gravedad NASA</title>
@@ -33,9 +25,7 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
 
-  <!-- =========================================================================
-       1. BARRA SUPERIOR RESPONSIVA (MÓVILES / TABLETS)
-       ========================================================================= -->
+  <!-- 1. BARRA SUPERIOR RESPONSIVA (MÓVILES / TABLETS) -->
   <div class="lg:hidden flex items-center justify-between p-4 glass-panel border-b border-slate-800 sticky top-0 z-30">
     <div class="flex items-center gap-2">
       <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center font-bold text-slate-950">☀</span>
@@ -46,9 +36,7 @@
     </button>
   </div>
 
-  <!-- =========================================================================
-       2. BARRA LATERAL DE NAVEGACIÓN, TRIPULACIÓN Y DOSIMETRÍA (SIDEBAR)
-       ========================================================================= -->
+  <!-- 2. BARRA LATERAL DE NAVEGACIÓN, TRIPULACIÓN Y DOSIMETRÍA (SIDEBAR) -->
   <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 glass-panel border-r border-slate-800 flex flex-col justify-between p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 shrink-0">
     <div class="space-y-4 overflow-y-auto pr-0.5">
       <!-- Identidad visual -->
@@ -84,6 +72,12 @@
         <button id="nav-checkup" type="button" onclick="cambiarVista('view-checkup', this)" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🩺</span> Autoevaluación</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">INPUT</span>
+        </button>
+
+        <!-- NUEVA PESTAÑA: SALUD MENTAL Y CONTENCIÓN NEURO-CONDUCTUAL -->
+        <button id="nav-mental" type="button" onclick="cambiarVista('view-mental', this)" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+          <span class="flex items-center gap-2.5"><span>🧠</span> Salud Mental IA</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">BHP</span>
         </button>
 
         <button id="nav-prevention" type="button" onclick="cambiarVista('view-prevention', this)" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
@@ -126,9 +120,7 @@
     </div>
   </aside>
 
-  <!-- =========================================================================
-       3. CONTENEDOR PRINCIPAL DE OPERACIONES
-       ========================================================================= -->
+  <!-- 3. CONTENEDOR PRINCIPAL DE OPERACIONES -->
   <div class="flex-grow flex flex-col p-4 md:p-6 gap-4 max-w-full">
 
     <header class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -482,7 +474,177 @@
     </section>
 
     <!-- =========================================================================
-         VISTA 4: PROTOCOLO DIARIO DE PREVENCIÓN Y CONTRAMEDIDAS
+         VISTA 4 (NUEVA PESTAÑA): SALUD MENTAL, HOLOGRAMA Y CONTENCIÓN IA (BHP)
+         ========================================================================= -->
+    <section id="view-mental" style="display: none;" class="tab-view grid grid-cols-1 lg:grid-cols-12 gap-5 flex-grow">
+      
+      <!-- COLUMNA 1: EVALUACIÓN DE SÍNTOMAS MENTALES Y SUEÑO (4 cols) -->
+      <div class="lg:col-span-4 glass-panel rounded-2xl p-5 flex flex-col justify-between gap-4 border border-purple-500/30">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between border-b border-purple-500/20 pb-2">
+            <h3 class="text-xs font-mono-tech uppercase tracking-wider text-purple-300">// 1. Evaluación Psico-Cognitiva</h3>
+            <span class="text-[10px] font-mono-tech px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">NASA BHP</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-purple-500/25">
+              <label class="text-[10px] font-mono-tech text-purple-300 block mb-1">Horas Sueño (24h)</label>
+              <input id="mentalSleepInput" type="number" step="0.5" min="0" max="14" value="6.5" class="w-full bg-transparent text-lg font-bold font-mono-tech text-white focus:outline-none" />
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-950/80 border border-purple-500/25">
+              <label class="text-[10px] font-mono-tech text-purple-300 block mb-1">Nivel Estrés (1-10)</label>
+              <input id="mentalStressInput" type="number" min="1" max="10" value="3" class="w-full bg-transparent text-lg font-bold font-mono-tech text-white focus:outline-none" />
+            </div>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <span class="text-[10px] font-mono-tech uppercase text-slate-400 block">Indicadores Conductuales y Perceptuales:</span>
+
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-purple-400/50 cursor-pointer transition">
+              <input type="checkbox" value="ansiedad" class="mental-symptom-cb mt-0.5 accent-purple-400 w-4 h-4" />
+              <div>
+                <strong class="text-white block">Ansiedad Aguda / Pánico EVA</strong>
+                <span class="text-[11px] text-slate-400">Palpitaciones, sensación de encierro o hiperventilación.</span>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-purple-400/50 cursor-pointer transition">
+              <input type="checkbox" value="depresion" class="mental-symptom-cb mt-0.5 accent-purple-400 w-4 h-4" />
+              <div>
+                <strong class="text-white block">Ánimo Bajo / Aislamiento</strong>
+                <span class="text-[11px] text-slate-400">Apatía, desmotivación o desconexión emocional de la Tierra.</span>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-purple-400/50 cursor-pointer transition">
+              <input type="checkbox" value="alucinacion" class="mental-symptom-cb mt-0.5 accent-purple-400 w-4 h-4" />
+              <div>
+                <strong class="text-white block">Alucinaciones / Fosfenos</strong>
+                <span class="text-[11px] text-slate-400">Destellos visuales o distorsiones auditivas por fatiga/radiación.</span>
+              </div>
+            </label>
+          </div>
+
+          <button type="button" onclick="ejecutarEscaneoMental()" class="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-purple-600/25 cursor-pointer">
+            🧠 Escanear Estado Mental y Activar IA
+          </button>
+        </div>
+
+        <!-- Botones de simulación rápida -->
+        <div class="pt-3 border-t border-slate-800 space-y-1.5">
+          <span class="text-[10px] font-mono-tech text-slate-400 block">SIMULACIÓN RÁPIDA DE CRISIS BHP:</span>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="simularCrisisMental('panico')" class="py-2 px-2 rounded-xl bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-[11px] font-mono-tech text-purple-200 cursor-pointer">
+              ⚡ Crisis Ansiedad
+            </button>
+            <button type="button" onclick="simularCrisisMental('alucinacion')" class="py-2 px-2 rounded-xl bg-rose-950/50 hover:bg-rose-900/60 border border-rose-500/40 text-[11px] font-mono-tech text-rose-200 cursor-pointer">
+              👁️ Alucinación Sueño
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUMNA 2: HOLOGRAMA HUMANO DE AFECTACIÓN PSICO-FÍSICA (4 cols) -->
+      <div class="lg:col-span-4 glass-panel holo-grid rounded-2xl p-5 flex flex-col items-center justify-between relative overflow-hidden border border-purple-500/30">
+        <div class="w-full flex items-center justify-between z-10">
+          <span class="text-[10px] font-mono-tech text-purple-300 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
+            MAPA NEURO-SOMÁTICO
+          </span>
+          <span id="mentalStatusBadge" class="text-[10px] font-mono-tech px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+            ESTABLE
+          </span>
+        </div>
+
+        <!-- Silueta Humana Holográfica Interactiva -->
+        <div class="relative my-2 flex items-center justify-center w-full h-72">
+          <div id="mentalScanLaser" class="mental-scan-laser hidden"></div>
+
+          <svg viewBox="0 0 220 400" class="w-48 h-72 relative z-10 drop-shadow-[0_0_15px_rgba(168,85,247,0.3)]">
+            <g fill="rgba(30, 41, 59, 0.55)" stroke="#38bdf8" stroke-width="1.4" stroke-opacity="0.5">
+              <circle cx="110" cy="45" r="26" />
+              <path d="M98 71 L122 71 L148 90 L140 215 L80 215 L72 90 Z" />
+              <path d="M72 92 L45 155 L35 215 L50 218 L63 162 L80 115 Z" />
+              <path d="M148 92 L175 155 L185 215 L170 218 L157 162 L140 115 Z" />
+              <path d="M82 215 L75 310 L70 385 L92 385 L98 310 L106 225 Z" />
+              <path d="M138 215 L145 310 L150 385 L128 385 L122 310 L114 225 Z" />
+            </g>
+
+            <!-- Punto 1: Corteza Cerebral / Sistema Límbico -->
+            <g class="cursor-pointer" onclick="inspeccionarPuntoMental('brain')">
+              <circle id="m-node-brain" cx="110" cy="45" r="18" class="m-zone-normal" />
+              <text x="110" y="48" text-anchor="middle" fill="#fff" font-size="7" font-family="monospace">CORTEZA</text>
+            </g>
+
+            <!-- Punto 2: Respuesta Cardiorrespiratoria (Taquicardia por ansiedad) -->
+            <g class="cursor-pointer" onclick="inspeccionarPuntoMental('heart')">
+              <rect id="m-node-heart" x="86" y="92" width="48" height="44" rx="10" class="m-zone-normal" />
+              <text x="110" y="117" text-anchor="middle" fill="#fff" font-size="7" font-family="monospace">VAGAL</text>
+            </g>
+
+            <!-- Punto 3: Eje Cortisol / Sueño -->
+            <g class="cursor-pointer" onclick="inspeccionarPuntoMental('cortisol')">
+              <rect id="m-node-cortisol" x="88" y="146" width="44" height="44" rx="10" class="m-zone-normal" />
+              <text x="110" y="171" text-anchor="middle" fill="#fff" font-size="7" font-family="monospace">CORTISOL</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="w-full p-3 rounded-xl bg-slate-950/90 border border-purple-500/30 text-xs text-center z-10">
+          <p id="mentalNodeInfo" class="text-slate-300 font-mono-tech text-[11px] leading-relaxed">
+            Haz clic en CORTEZA, VAGAL o CORTISOL en el holograma para ver cómo impacta el estrés al cuerpo.
+          </p>
+        </div>
+      </div>
+
+      <!-- COLUMNA 3: ASISTENTE IA DE CONTENCIÓN + RESPIRACIÓN + PASOS INMEDIATOS (4 cols) -->
+      <div class="lg:col-span-4 glass-panel rounded-2xl p-5 flex flex-col justify-between gap-4 border border-purple-500/30">
+        
+        <!-- Orbe IA Empático + Voz -->
+        <div class="p-4 rounded-2xl bg-slate-950/85 border border-purple-500/30 flex flex-col items-center text-center">
+          <div class="w-full flex items-center justify-between text-[10px] font-mono-tech text-slate-400 mb-2">
+            <span>ASISTENTE IA // TONALLI-BHP</span>
+            <button id="btnToggleMentalVoice" type="button" onclick="toggleVozMental()" class="text-purple-300 hover:text-white cursor-pointer">
+              🔊 Voz: Activa
+            </button>
+          </div>
+
+          <div id="mentalAiOrb" class="mental-orb my-2">
+            <div class="mental-orb-core"></div>
+          </div>
+
+          <!-- Botón interactivo de Respiración Táctica 4-4-4-4 -->
+          <button id="btnMentalBreathe" type="button" onclick="toggleRespiracionGuiada()" class="mt-2 px-4 py-1.5 rounded-full bg-purple-600/30 hover:bg-purple-500/40 border border-purple-400 text-[11px] font-mono-tech text-purple-200 transition cursor-pointer">
+            🧘 Iniciar Respiración Táctica 4-4-4-4
+          </button>
+
+          <div class="mt-3 w-full p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-left">
+            <p id="mentalAiMessage" class="text-xs text-purple-100 leading-relaxed">
+              "Estoy monitoreando tu bienestar neuro-conductual, Comandante. Si sientes ansiedad, fatiga emocional o distorsiones visuales, ejecuta un escaneo para guiarte paso a paso."
+            </p>
+          </div>
+        </div>
+
+        <!-- Pasos Inmediatos de Calma y Contención -->
+        <div class="flex-grow flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <h4 class="text-xs font-mono-tech uppercase tracking-wider text-amber-300">// Acciones Inmediatas de Calma</h4>
+            <span id="mentalStepsCounter" class="text-[11px] font-mono-tech text-slate-400">0/2 pasos</span>
+          </div>
+
+          <div id="mentalActionsList" class="space-y-2 text-xs flex-grow overflow-y-auto max-h-48 pr-1">
+            <!-- Checklist dinámico -->
+          </div>
+        </div>
+
+        <button type="button" onclick="estabilizarEstadoMental()" class="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition cursor-pointer">
+          ✓ Confirmar Estabilización Mental
+        </button>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         VISTA 5: PROTOCOLO DIARIO DE PREVENCIÓN Y CONTRAMEDIDAS
          ========================================================================= -->
     <section id="view-prevention" style="display: none;" class="tab-view glass-panel rounded-2xl p-6 space-y-4">
       <div class="flex items-center justify-between">
@@ -537,9 +699,7 @@
 
   </div>
 
-  <!-- =========================================================================
-       4. MODAL DE REGISTRO DE NUEVO TRIPULANTE (ALTA EN MISIÓN)
-       ========================================================================= -->
+  <!-- 4. MODAL DE REGISTRO DE NUEVO TRIPULANTE -->
   <div id="registerCrewModal" style="display: none;" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl shadow-cyan-500/10">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -618,12 +778,9 @@
     </div>
   </div>
 
-  <!-- =========================================================================
-       5. MODAL EMERGENTE DE CRISIS ADAPTADO A GRAVEDAD Y ENTORNO
-       ========================================================================= -->
+  <!-- 5. MODAL EMERGENTE DE CRISIS ADAPTADO A GRAVEDAD Y ENTORNO -->
   <div id="criticalModal" style="display: none;" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="critical-modal-box bg-slate-900 border-2 border-rose-500 rounded-3xl max-w-xl w-full p-6 space-y-4 relative max-h-[90vh] overflow-y-auto">
-      
       <div class="flex items-start gap-3">
         <div class="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/50 flex items-center justify-center text-2xl shrink-0">
           🚨
@@ -660,7 +817,6 @@
           ✓ Ejecutar Protocolo de Entorno
         </button>
       </div>
-
     </div>
   </div>
 
