@@ -1,3 +1,23 @@
+/**
+ * ============================================================================
+ * @fileoverview Motor principal de telemetría, gestión dinámica de tripulación,
+ *               diagnóstico multi-gravedad y visualización biomédica para
+ *               el sistema TONALLI VITAL.
+ * @version      2.2.0
+ * @description  Administra:
+ *               1. Navegación SPA entre módulos clínicos.
+ *               2. Recalibración física y médica según gravedad (0g, 0.16g, 0.38g, 1g).
+ *               3. Alta, selección, baja y persistencia (localStorage) de tripulantes.
+ *               4. Validación de umbrales clínicos y protocolo de emergencia autónomo.
+ *               5. Escáner anatómico interactivo (5 Peligros NASA HRP).
+ *               6. Renderizado en Canvas 2D (ECG a 60 FPS y gráficas de tendencia).
+ * ============================================================================
+ */
+
+/* ============================================================================
+   1. DICCIONARIOS DE CONFIGURACIÓN Y MODELOS DE ENTORNO GRAVITACIONAL
+   ============================================================================ */
+
 const titulosVistas = {
   'view-telemetry': 'Telemetría Biomédica y Tendencia Temporal',
   'view-anatomy': 'Escáner Holográfico Anatómico (5 Peligros NASA)',
@@ -82,6 +102,10 @@ const escenariosConfig = {
 
 let escenarioActual = 'leo';
 
+/* ============================================================================
+   2. NAVEGACIÓN Y CONTROL DE INTERFAZ (SPA)
+   ============================================================================ */
+
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('-translate-x-full');
 }
@@ -122,28 +146,151 @@ document.getElementById('envSelector').addEventListener('change', (e) => {
   registrarBitacora(`Escenario cambiado a ${cfg.nombre} (${cfg.gravedad}). Protocolos médicos recalibrados.`);
 });
 
-const tripulacion = [
+/* ============================================================================
+   3. GESTIÓN DINÁMICA DE TRIPULACIÓN (ALTA, SELECCIÓN, BAJA Y PERSISTENCIA)
+   ============================================================================ */
+
+const STORAGE_KEY = 'tonalli_vital_crew_v1';
+
+/** Tripulación inicial por defecto */
+const tripulacionBase = [
   {
-    id: 0, nombre: 'Cmdt. Elena Vance', modulo: 'Módulo Orión',
+    id: 1, nombre: 'Cmdt. Elena Vance', modulo: 'Módulo Orión',
     bpm: 72, sys: 118, dia: 76, spo2: 98, glucose: 94, temp: 36.7, sleep: 7.2, mood: 'Óptimo', estado: 'Nominal',
     histBpm: [70, 74, 71, 76, 73, 75, 72],
     histSleep: [7.5, 6.8, 7.0, 6.5, 7.1, 7.4, 7.2]
   },
   {
-    id: 1, nombre: 'Ing. Mateo Silva', modulo: 'Esclusa EVA',
+    id: 2, nombre: 'Ing. Mateo Silva', modulo: 'Esclusa EVA',
     bpm: 84, sys: 124, dia: 80, spo2: 97, glucose: 102, temp: 37.0, sleep: 6.1, mood: 'Fatiga', estado: 'En EVA',
     histBpm: [78, 82, 88, 85, 90, 86, 84],
     histSleep: [6.5, 6.0, 5.8, 6.2, 5.9, 6.0, 6.1]
   },
   {
-    id: 2, nombre: 'Dra. Sora Takahashi', modulo: 'Lab. Kibo',
+    id: 3, nombre: 'Dra. Sora Takahashi', modulo: 'Lab. Kibo',
     bpm: 68, sys: 112, dia: 72, spo2: 99, glucose: 89, temp: 36.5, sleep: 7.6, mood: 'Óptimo', estado: 'Nominal',
     histBpm: [66, 69, 68, 70, 67, 69, 68],
     histSleep: [7.8, 7.5, 7.6, 7.4, 7.7, 7.5, 7.6]
   }
 ];
+
+/** Carga la tripulación desde localStorage o inicia con la plantilla base */
+let tripulacion = JSON.parse(localStorage.getItem(STORAGE_KEY)) || JSON.parse(JSON.stringify(tripulacionBase));
 let astronautaActual = 0;
 let modoEmergencia = false;
+
+/** Guarda el estado actual de la tripulación en el almacenamiento del navegador */
+function guardarTripulacionStorage() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tripulacion));
+}
+
+/** Abre el modal para dar de alta un nuevo astronauta */
+function abrirModalRegistro() {
+  document.getElementById('formNewCrew').reset();
+  document.getElementById('registerCrewModal').style.display = 'flex';
+}
+
+/** Cierra el modal de alta de tripulantes */
+function cerrarModalRegistro() {
+  document.getElementById('registerCrewModal').style.display = 'none';
+}
+
+/**
+ * Procesa el formulario de alta, sintetiza un historial basal de 7 días
+ * alrededor de los signos ingresados y enfoca al nuevo tripulante.
+ * @param {SubmitEvent} event - Evento de envío del formulario.
+ */
+function registrarNuevoTripulante(event) {
+  event.preventDefault();
+
+  const nombre = document.getElementById('regName').value.trim();
+  const modulo = document.getElementById('regModule').value;
+  const bpm = parseInt(document.getElementById('regBpm').value, 10);
+  const sys = parseInt(document.getElementById('regSys').value, 10);
+  const dia = parseInt(document.getElementById('regDia').value, 10);
+  const spo2 = parseInt(document.getElementById('regSpo2').value, 10);
+  const glucose = parseInt(document.getElementById('regGlucose').value, 10);
+  const sleep = parseFloat(document.getElementById('regSleep').value);
+
+  // Generar curva histórica coherente de los últimos 6 días + lectura actual
+  const histBpm = [
+    bpm - 2, bpm + 1, bpm - 1, bpm + 3, bpm - 2, bpm + 1, bpm
+  ];
+  const histSleep = [
+    Math.max(4, sleep + 0.3),
+    Math.max(4, sleep - 0.2),
+    Math.max(4, sleep + 0.1),
+    Math.max(4, sleep - 0.4),
+    Math.max(4, sleep + 0.2),
+    Math.max(4, sleep - 0.1),
+    sleep
+  ];
+
+  const nuevoAstronauta = {
+    id: Date.now(),
+    nombre,
+    modulo,
+    bpm,
+    sys,
+    dia,
+    spo2,
+    glucose,
+    temp: 36.6,
+    sleep,
+    mood: 'Óptimo',
+    estado: bpm > 130 || spo2 < 91 ? 'ALERTA' : 'Nominal',
+    histBpm,
+    histSleep
+  };
+
+  tripulacion.push(nuevoAstronauta);
+  astronautaActual = tripulacion.length - 1;
+  modoEmergencia = nuevoAstronauta.estado === 'ALERTA';
+
+  guardarTripulacionStorage();
+  renderizarTripulacion();
+  actualizarMetricas();
+  dibujarTendencia();
+  cerrarModalRegistro();
+
+  registrarBitacora(`Nuevo tripulante integrado: ${nombre} (${modulo}). Telemetría vinculada.`, 'ok');
+}
+
+/**
+ * Elimina un tripulante adicional (mantiene al menos 1 activo en misión).
+ * @param {number} idx - Índice del tripulante en el arreglo.
+ * @param {MouseEvent} event - Evento de clic para detener propagación.
+ */
+function eliminarTripulante(idx, event) {
+  event.stopPropagation();
+  if (tripulacion.length <= 1) return;
+
+  const eliminado = tripulacion[idx].nombre;
+  tripulacion.splice(idx, 1);
+
+  if (astronautaActual >= tripulacion.length) {
+    astronautaActual = tripulacion.length - 1;
+  }
+
+  guardarTripulacionStorage();
+  renderizarTripulacion();
+  actualizarMetricas();
+  dibujarTendencia();
+  registrarBitacora(`Tripulante ${eliminado} dado de baja del panel activo.`);
+}
+
+/** Restaura los 3 tripulantes iniciales por defecto */
+function restablecerTripulacionBase() {
+  tripulacion = JSON.parse(JSON.stringify(tripulacionBase));
+  astronautaActual = 0;
+  modoEmergencia = false;
+  guardarTripulacionStorage();
+  renderizarTripulacion();
+  actualizarMetricas();
+  dibujarTendencia();
+  cerrarModalRegistro();
+  registrarBitacora('Plantilla base de 3 tripulantes restaurada.', 'ok');
+}
 
 function registrarBitacora(mensaje, tipo = 'info') {
   const log = document.getElementById('eventLog');
@@ -159,31 +306,41 @@ function registrarBitacora(mensaje, tipo = 'info') {
 
 function renderizarTripulacion() {
   const contenedor = document.getElementById('crewList');
+  document.getElementById('crewCountBadge').textContent = tripulacion.length;
   contenedor.innerHTML = '';
+
   tripulacion.forEach((astro, idx) => {
     const activo = idx === astronautaActual;
     const esCritico = astro.estado === 'CRÍTICO' || astro.estado === 'ALERTA';
-    const btn = document.createElement('button');
-    btn.type = 'button';
+    const btn = document.createElement('div');
     btn.className = `w-full text-left p-2.5 rounded-xl border transition cursor-pointer ${
       activo ? 'bg-cyan-500/15 border-cyan-500/50 text-white' : 'bg-slate-950/50 border-slate-800/80 text-slate-400 hover:border-slate-700'
     }`;
+
     btn.innerHTML = `
-      <div class="flex justify-between items-center">
-        <span class="text-xs font-bold">${astro.nombre}</span>
-        <span class="text-[10px] font-mono-tech px-1.5 py-0.5 rounded ${
-          esCritico ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-slate-800 text-cyan-300'
-        }">${astro.estado}</span>
+      <div class="flex justify-between items-center gap-1">
+        <span class="text-xs font-bold truncate">${astro.nombre}</span>
+        <div class="flex items-center gap-1 shrink-0">
+          <span class="text-[10px] font-mono-tech px-1.5 py-0.5 rounded ${
+            esCritico ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40' : 'bg-slate-800 text-cyan-300'
+          }">${astro.estado}</span>
+          ${tripulacion.length > 1 ? `
+            <button type="button" title="Retirar tripulante" onclick="eliminarTripulante(${idx}, event)" class="text-[10px] text-slate-500 hover:text-rose-400 px-1 cursor-pointer">✕</button>
+          ` : ''}
+        </div>
       </div>
       <span class="text-[10px] text-slate-400 block mt-0.5">${astro.modulo}</span>
     `;
+
     btn.onclick = () => {
       astronautaActual = idx;
+      modoEmergencia = tripulacion[idx].estado === 'CRÍTICO' || tripulacion[idx].estado === 'ALERTA';
       actualizarMetricas();
       renderizarTripulacion();
       dibujarTendencia();
       registrarBitacora(`Enfoque biomédico cambiado a ${astro.nombre}.`);
     };
+
     contenedor.appendChild(btn);
   });
 }
@@ -215,6 +372,10 @@ function actualizarMetricas() {
     badge.className = 'text-[10px] font-mono-tech px-2 py-0.5 rounded bg-slate-800 text-cyan-400';
   }
 }
+
+/* ============================================================================
+   4. SISTEMA DE EMERGENCIAS AUTÓNOMO Y AUTOEVALUACIÓN CLÍNICA
+   ============================================================================ */
 
 function abrirModalCritico(hallazgos, recomendacionesExtra = []) {
   const a = tripulacion[astronautaActual];
@@ -253,6 +414,7 @@ function ejecutarEstabilizacion() {
   modoEmergencia = false;
 
   a.histBpm[a.histBpm.length - 1] = a.bpm;
+  guardarTripulacionStorage();
   actualizarMetricas();
   renderizarTripulacion();
   dibujarTendencia();
@@ -274,6 +436,7 @@ document.getElementById('btnEmergency').addEventListener('click', () => {
   modoEmergencia = true;
 
   a.histBpm[a.histBpm.length - 1] = a.bpm;
+  guardarTripulacionStorage();
   actualizarMetricas();
   renderizarTripulacion();
   dibujarTendencia();
@@ -344,6 +507,7 @@ function evaluarSaludLocal() {
   if (hallazgos.length > 0) {
     modoEmergencia = true;
     a.estado = 'ALERTA';
+    guardarTripulacionStorage();
     actualizarMetricas();
     renderizarTripulacion();
     dibujarTendencia();
@@ -354,6 +518,7 @@ function evaluarSaludLocal() {
   } else {
     modoEmergencia = false;
     a.estado = 'Nominal';
+    guardarTripulacionStorage();
     actualizarMetricas();
     renderizarTripulacion();
     dibujarTendencia();
@@ -365,7 +530,10 @@ function evaluarSaludLocal() {
   }
 }
 
-// ESCÁNER HOLOGRÁFICO ANATÓMICO INTERACTIVO
+/* ============================================================================
+   5. ESCÁNER HOLOGRÁFICO ANATÓMICO 3D (5 PELIGROS NASA HRP)
+   ============================================================================ */
+
 const organData = {
   neuro: {
     code: 'SYS-01: NEURO',
@@ -457,7 +625,10 @@ function actualizarBienestar() {
   registrarBitacora(`Índice preventivo actualizado al ${pct}%.`, 'ok');
 }
 
-// Simulación fisiológica sutil en tiempo real cada 2 segundos
+/* ============================================================================
+   6. MOTOR DE SIMULACIÓN FISIOLÓGICA Y GRÁFICAS EN CANVAS 2D
+   ============================================================================ */
+
 setInterval(() => {
   tripulacion.forEach((p) => {
     if (p.estado !== 'CRÍTICO' && p.estado !== 'ALERTA') {
@@ -583,11 +754,13 @@ function dibujarECG() {
   requestAnimationFrame(dibujarECG);
 }
 
+/* ============================================================================
+   7. INICIALIZACIÓN DEL SISTEMA
+   ============================================================================ */
 window.addEventListener('resize', dibujarTendencia);
 
-// Inicialización
 renderizarTripulacion();
 actualizarMetricas();
 dibujarTendencia();
-registrarBitacora('Sistema Multi-Gravedad Tonalli Vital iniciado.');
+registrarBitacora(`Sistema Multi-Gravedad Tonalli Vital iniciado (${tripulacion.length} tripulantes activos).`);
 dibujarECG();
