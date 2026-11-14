@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <!-- =========================================================================
+       PROYECTO: TONALLI VITAL // Centro de Mando Biomédico Multi-Gravedad
+       ARCHIVO:  index.html
+       DESCRIPCIÓN: Estructura principal SPA (Single Page Application) que integra
+                    telemetría en tiempo real, gestión dinámica de tripulación,
+                    escáner holográfico SVG (NASA HRP), autoevaluación clínica
+                    y modal de respuesta autónoma.
+       ========================================================================= -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tonalli Vital // Centro de Mando Biomédico Multi-Gravedad NASA</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  
   <script>
     tailwind.config = {
       theme: {
@@ -18,11 +28,14 @@
       }
     }
   </script>
+
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
 
-  <!-- BARRA SUPERIOR MÓVIL -->
+  <!-- =========================================================================
+       1. BARRA SUPERIOR RESPONSIVA (MÓVILES / TABLETS)
+       ========================================================================= -->
   <div class="lg:hidden flex items-center justify-between p-4 glass-panel border-b border-slate-800 sticky top-0 z-30">
     <div class="flex items-center gap-2">
       <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center font-bold text-slate-950">☀</span>
@@ -33,9 +46,12 @@
     </button>
   </div>
 
-  <!-- MENÚ LATERAL INTERACTIVO (SIDEBAR) -->
+  <!-- =========================================================================
+       2. BARRA LATERAL DE NAVEGACIÓN, TRIPULACIÓN Y DOSIMETRÍA (SIDEBAR)
+       ========================================================================= -->
   <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-72 glass-panel border-r border-slate-800 flex flex-col justify-between p-4 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 shrink-0">
-    <div class="space-y-5">
+    <div class="space-y-4 overflow-y-auto pr-0.5">
+      <!-- Identidad visual -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center font-bold text-slate-950 text-xl shadow-lg shadow-amber-500/20">
@@ -51,56 +67,68 @@
         <button type="button" onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white text-lg">✕</button>
       </div>
 
-      <nav class="space-y-1.5">
-        <span class="text-[10px] font-mono-tech uppercase tracking-widest text-slate-500 px-3 block mb-2">Módulos de Misión</span>
+      <!-- Menú de conmutación de vistas SPA -->
+      <nav class="space-y-1" aria-label="Módulos de Misión">
+        <span class="text-[10px] font-mono-tech uppercase tracking-widest text-slate-500 px-3 block mb-1.5">Módulos de Misión</span>
         
-        <button id="nav-telemetry" type="button" onclick="cambiarVista('view-telemetry', this)" class="nav-item active w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-telemetry" type="button" onclick="cambiarVista('view-telemetry', this)" class="nav-item active w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>📡</span> Telemetría y Tendencia</span>
           <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
         </button>
 
-        <button id="nav-anatomy" type="button" onclick="cambiarVista('view-anatomy', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-anatomy" type="button" onclick="cambiarVista('view-anatomy', this)" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🧬</span> Escáner Anatómico</span>
           <span class="text-[10px] text-slate-500">5 PELIGROS</span>
         </button>
 
-        <button id="nav-checkup" type="button" onclick="cambiarVista('view-checkup', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-checkup" type="button" onclick="cambiarVista('view-checkup', this)" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🩺</span> Autoevaluación</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400">INPUT</span>
         </button>
 
-        <button id="nav-prevention" type="button" onclick="cambiarVista('view-prevention', this)" class="nav-item w-full flex items-center justify-between px-3 py-3 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
+        <button id="nav-prevention" type="button" onclick="cambiarVista('view-prevention', this)" class="nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-r-xl text-left text-xs font-mono-tech text-slate-400 hover:text-white hover:bg-slate-800/40 transition cursor-pointer">
           <span class="flex items-center gap-2.5"><span>🛡️</span> Prevención y Rutina</span>
           <span id="sidebarWellnessBadge" class="text-[10px] text-emerald-400 font-bold">75%</span>
         </button>
       </nav>
 
+      <!-- Sección dinámica de Tripulación con botón de alta -->
       <div class="pt-3 border-t border-slate-800/80">
-        <span class="text-[10px] font-mono-tech uppercase tracking-widest text-slate-500 px-1 block mb-2">Tripulación Activa</span>
-        <div id="crewList" class="space-y-1.5"></div>
+        <div class="flex items-center justify-between px-1 mb-2">
+          <span class="text-[10px] font-mono-tech uppercase tracking-widest text-slate-500">
+            Tripulación (<span id="crewCountBadge">3</span>)
+          </span>
+          <button type="button" onclick="abrirModalRegistro()" class="px-2 py-0.5 rounded-md bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 font-mono-tech text-[10px] font-bold transition cursor-pointer">
+            + Nuevo
+          </button>
+        </div>
+        <div id="crewList" class="space-y-1.5 max-h-48 overflow-y-auto pr-0.5"></div>
       </div>
     </div>
 
-    <div class="pt-3 border-t border-slate-800/80 space-y-2.5">
-      <div class="p-3 rounded-xl bg-slate-950/70 border border-cyan-500/20 flex items-center justify-between">
+    <!-- Indicadores ambientales: Gravedad local y Dosimetría -->
+    <div class="pt-3 border-t border-slate-800/80 space-y-2">
+      <div class="p-2.5 rounded-xl bg-slate-950/70 border border-cyan-500/20 flex items-center justify-between">
         <span class="text-[10px] font-mono-tech uppercase text-cyan-400">Gravedad Local</span>
         <span id="sidebarGravityBadge" class="text-xs font-mono-tech font-bold text-white">0.00 g (Microgravedad)</span>
       </div>
 
-      <div class="p-3 rounded-xl bg-slate-950/70 border border-amber-500/20">
-        <div class="flex items-center justify-between mb-1.5">
+      <div class="p-2.5 rounded-xl bg-slate-950/70 border border-amber-500/20">
+        <div class="flex items-center justify-between mb-1">
           <span class="text-[10px] font-mono-tech uppercase text-amber-400">Índice Tonalli Solar</span>
           <span class="text-xs font-mono-tech font-bold text-amber-300" id="radiationVal">0.42 mSv/h</span>
         </div>
-        <div class="w-full bg-slate-800 rounded-full h-1.5 mb-1.5">
+        <div class="w-full bg-slate-800 rounded-full h-1.5 mb-1">
           <div id="radiationBar" class="bg-gradient-to-r from-amber-400 to-orange-500 h-1.5 rounded-full transition-all duration-500" style="width: 35%"></div>
         </div>
-        <p class="text-[11px] text-slate-400 leading-tight" id="radiationStatus">Escudo nominal. Exposición segura.</p>
+        <p class="text-[10px] text-slate-400 leading-tight" id="radiationStatus">Escudo nominal. Exposición segura.</p>
       </div>
     </div>
   </aside>
 
-  <!-- ÁREA PRINCIPAL -->
+  <!-- =========================================================================
+       3. CONTENEDOR PRINCIPAL DE OPERACIONES
+       ========================================================================= -->
   <div class="flex-grow flex flex-col p-4 md:p-6 gap-4 max-w-full">
 
     <header class="glass-panel rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -110,7 +138,7 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-end">
-        <select id="envSelector" class="px-3 py-2 rounded-xl bg-slate-900 border border-amber-500/40 text-xs font-mono-tech text-amber-300 focus:outline-none cursor-pointer">
+        <select id="envSelector" aria-label="Seleccionar entorno gravitacional" class="px-3 py-2 rounded-xl bg-slate-900 border border-amber-500/40 text-xs font-mono-tech text-amber-300 focus:outline-none cursor-pointer">
           <option value="leo">🛰 Órbita Baja ISS (0.00 g)</option>
           <option value="earth">🌍 Base Tierra / Reentrada (1.00 g)</option>
           <option value="moon">🌑 Base Lunar Artemis (0.16 g)</option>
@@ -153,9 +181,9 @@
       </span>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- VISTA 1: TELEMETRÍA EN VIVO + TENDENCIA TEMPORAL          -->
-    <!-- ========================================================= -->
+    <!-- =========================================================================
+         VISTA 1: TELEMETRÍA EN VIVO, ECG Y TENDENCIA DE 7 DÍAS
+         ========================================================================= -->
     <section id="view-telemetry" class="tab-view grid grid-cols-1 xl:grid-cols-12 gap-5 flex-grow">
       <div class="xl:col-span-8 flex flex-col gap-4">
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
@@ -244,13 +272,12 @@
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- VISTA 2: ESCÁNER HOLOGRÁFICO ANATÓMICO (NASA HRP)          -->
-    <!-- ========================================================= -->
+    <!-- =========================================================================
+         VISTA 2: ESCÁNER HOLOGRÁFICO ANATÓMICO 3D (5 PELIGROS NASA HRP)
+         ========================================================================= -->
     <section id="view-anatomy" style="display: none;" class="tab-view grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
       
       <div class="lg:col-span-5 glass-panel holo-grid rounded-2xl p-5 flex flex-col items-center justify-between relative overflow-hidden border border-cyan-500/30">
-        
         <div class="w-full flex items-center justify-between text-[10px] font-mono-tech text-cyan-400 z-10">
           <span class="flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
@@ -300,17 +327,14 @@
               <circle cx="90" cy="30" r="10" fill="#38bdf8" class="node-ping" />
               <circle cx="90" cy="30" r="6" fill="#38bdf8" stroke="#020617" stroke-width="1.5" />
             </g>
-
             <g class="cursor-pointer" onclick="seleccionarOrgano('cardio')">
               <circle cx="96" cy="84" r="10" fill="#34d399" class="node-ping" />
               <circle cx="96" cy="84" r="6" fill="#34d399" stroke="#020617" stroke-width="1.5" />
             </g>
-
             <g class="cursor-pointer" onclick="seleccionarOrgano('immune')">
               <circle cx="84" cy="118" r="10" fill="#fbbf24" class="node-ping" />
               <circle cx="84" cy="118" r="6" fill="#fbbf24" stroke="#020617" stroke-width="1.5" />
             </g>
-
             <g class="cursor-pointer" onclick="seleccionarOrgano('musculo')">
               <circle cx="67" cy="186" r="10" fill="#a78bfa" class="node-ping" />
               <circle cx="67" cy="186" r="6" fill="#a78bfa" stroke="#020617" stroke-width="1.5" />
@@ -381,9 +405,9 @@
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- VISTA 3: AUTOEVALUACIÓN MANUAL COMPLETA                   -->
-    <!-- ========================================================= -->
+    <!-- =========================================================================
+         VISTA 3: AUTOEVALUACIÓN BIOMÉDICA Y CONDUCTUAL
+         ========================================================================= -->
     <section id="view-checkup" style="display: none;" class="tab-view glass-panel rounded-2xl p-6 space-y-5">
       <div>
         <h3 class="text-base font-bold text-white">Autoevaluación Biomédica y Conductual</h3>
@@ -457,9 +481,9 @@
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- VISTA 4: PREVENCIÓN Y GAMIFICACIÓN                        -->
-    <!-- ========================================================= -->
+    <!-- =========================================================================
+         VISTA 4: PROTOCOLO DIARIO DE PREVENCIÓN Y CONTRAMEDIDAS
+         ========================================================================= -->
     <section id="view-prevention" style="display: none;" class="tab-view glass-panel rounded-2xl p-6 space-y-4">
       <div class="flex items-center justify-between">
         <div>
@@ -502,7 +526,7 @@
         </label>
 
         <label class="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center gap-3 cursor-pointer hover:border-emerald-500/40">
-          <input type="checkbox" onchange="actualizarBienestar()" class="wellness-task accent-emerald-500 w-4 h-4" />
+          <input type="checkbox" checked onchange="actualizarBienestar()" class="wellness-task accent-emerald-500 w-4 h-4" />
           <div>
             <strong class="text-white block">Higiene Circadiana y Escaneo Ocular</strong>
             <span class="text-slate-400">Control de sueño (7-8h) y prevención de edema óptico (SANS).</span>
@@ -513,9 +537,90 @@
 
   </div>
 
-  <!-- ========================================================= -->
-  <!-- VENTANA EMERGENTE DE ALERTA CRÍTICA ADAPTADA AL ESCENARIO -->
-  <!-- ========================================================= -->
+  <!-- =========================================================================
+       4. MODAL DE REGISTRO DE NUEVO TRIPULANTE (ALTA EN MISIÓN)
+       ========================================================================= -->
+  <div id="registerCrewModal" style="display: none;" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-cyan-500/50 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl shadow-cyan-500/10">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2.5">
+          <span class="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-lg">🧑‍🚀</span>
+          <div>
+            <h3 class="text-base font-bold text-white">Alta de Nuevo Tripulante</h3>
+            <p class="text-[11px] font-mono-tech text-slate-400">Registro biomédico y asignación de módulo</p>
+          </div>
+        </div>
+        <button type="button" onclick="cerrarModalRegistro()" class="text-slate-400 hover:text-white text-lg cursor-pointer">✕</button>
+      </div>
+
+      <form id="formNewCrew" onsubmit="registrarNuevoTripulante(event)" class="space-y-3.5 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 mb-1">Rango y Nombre Completo *</label>
+            <input id="regName" type="text" required placeholder="Ej. Esp. Carlos Mendoza" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:border-cyan-400 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-slate-300 mb-1">Módulo Asignado *</label>
+            <select id="regModule" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white focus:border-cyan-400 focus:outline-none">
+              <option value="Módulo Orión">Módulo Orión</option>
+              <option value="Esclusa EVA">Esclusa EVA</option>
+              <option value="Lab. Kibo">Lab. Kibo</option>
+              <option value="Hábitat Lunar">Hábitat Lunar</option>
+              <option value="Base Ares-1">Base Ares-1</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-1 border-t border-slate-800/80">
+          <span class="text-[10px] font-mono-tech uppercase text-cyan-400 block mb-2">Línea Base Biomédica Inicial</span>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <div>
+              <label class="block text-slate-400 mb-1">BPM Basal</label>
+              <input id="regBpm" type="number" min="45" max="160" value="70" required class="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Presión Sistólica</label>
+              <input id="regSys" type="number" min="70" max="200" value="116" required class="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Presión Diastólica</label>
+              <input id="regDia" type="number" min="40" max="130" value="75" required class="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">SpO₂ (%)</label>
+              <input id="regSpo2" type="number" min="70" max="100" value="99" required class="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Glucosa (mg/dL)</label>
+              <input id="regGlucose" type="number" min="50" max="300" value="92" required class="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1">Sueño Diario (h)</label>
+              <input id="regSleep" type="number" step="0.5" min="2" max="12" value="7.5" required class="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white font-mono-tech" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="restablecerTripulacionBase()" class="text-[11px] font-mono-tech text-slate-500 hover:text-rose-400 cursor-pointer">
+            ↺ Restaurar 3 base
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="cerrarModalRegistro()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono-tech cursor-pointer">
+              Cancelar
+            </button>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold cursor-pointer">
+              + Integrar a Misión
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       5. MODAL EMERGENTE DE CRISIS ADAPTADO A GRAVEDAD Y ENTORNO
+       ========================================================================= -->
   <div id="criticalModal" style="display: none;" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
     <div class="critical-modal-box bg-slate-900 border-2 border-rose-500 rounded-3xl max-w-xl w-full p-6 space-y-4 relative max-h-[90vh] overflow-y-auto">
       
